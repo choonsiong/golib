@@ -24,9 +24,9 @@ package format
 
 import "strconv"
 
-// PadZeroToNine returns a single digit number padded with '0' in front.
+// PadWithZero returns a number padded with '0' in front.
 // '0' => '00', '1' => '01' etc.
-func PadZeroToNine(i int) string {
+func PadWithZero(i int) string {
 	if i >= 0 && i < 10 {
 		return "0" + strconv.Itoa(i)
 	}
