@@ -23,6 +23,7 @@ SOFTWARE.
 package cla
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
@@ -30,7 +31,8 @@ import (
 // GetFileName returns a filename from the command line argument.
 func GetFileName() string {
 	if len(os.Args) != 2 {
-		log.Fatal("Invalid argument, please provide a filename")
+		fmt.Println("Invalid argument, please provide a filename")
+		os.Exit(1)
 	}
 
 	return os.Args[1]
