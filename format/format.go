@@ -24,8 +24,8 @@ package format
 
 import "strconv"
 
-// PadWithZero returns a number padded with '0' in front.
-// '0' => '00', '1' => '01' etc.
+// PadWithZero returns a string representation of i (0 <= i < 10) padded with '0' in front, else it returns a string representation of i.
+// For example: '0' => '00', '1' => '01' etc.
 func PadWithZero(i int) string {
 	if i >= 0 && i < 10 {
 		return "0" + strconv.Itoa(i)
