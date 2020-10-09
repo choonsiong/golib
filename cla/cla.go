@@ -31,19 +31,19 @@ import (
 func GetFileName() string {
 	if len(os.Args) != 2 {
 		fmt.Printf("Invalid argument, please provide a filename")
-		os.Exit(22)
+		os.Exit(1)
 	}
 
 	return os.Args[1]
 }
 
-// GetFileNames returns number of filenames specified in count.
+// GetFileNames returns number of filenames specified by count.
 func GetFileNames(count int) []string {
 	total := count + 1
 
 	if len(os.Args) != total {
 		fmt.Printf("Invalid arguments, please provide %d filenames", count)
-		os.Exit(22)
+		os.Exit(1)
 	}
 
 	return os.Args[1:]
