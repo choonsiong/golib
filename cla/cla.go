@@ -40,6 +40,8 @@ func GetFileName() string {
 
 // GetFileNames returns number of filenames specified by count.
 func GetFileNames(count int) []string {
+	log.SetFlags(0)
+
 	total := count + 1
 
 	if len(os.Args) != total {
