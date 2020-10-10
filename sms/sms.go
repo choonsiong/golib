@@ -10,11 +10,11 @@ import (
 )
 
 type SmsContent struct {
-	Host       string
+	Host       string // hostname or ip
 	Port       string
-	Sender     string
-	Text       string
-	Recipients []string
+	Sender     string   // to identify the sms sender
+	Text       string   // sms text
+	Recipients []string // msisdn list of recipients
 }
 
 // SendSMS sends a text message using the content of SmsContent struct.
