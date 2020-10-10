@@ -17,7 +17,9 @@ type SmsContent struct {
 	Recipients []string
 }
 
-// SendSMS sends a text message using the content of SmsContent struct. The caller is required to initialize SmsContent with correct values for all fields. Furthermore, a preconfigured SMS server is required.
+// SendSMS sends a text message using the content of SmsContent struct.
+// The caller is required to initialize SmsContent with correct values for all fields.
+// Furthermore, a preconfigured SMS server is required.
 func SendSMS(sc SmsContent) {
 	// Normalized sms text
 	t := strings.Replace(sc.Text, " ", "+", -1) // replace whitespace with '+'
