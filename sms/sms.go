@@ -23,7 +23,6 @@ package sms
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -59,8 +58,10 @@ func SendSMS(sc SmsContent) {
 
 		if err != nil {
 			msg := fmt.Sprint(err) + ": " + stderr.String()
-			io.WriteString(os.Stderr, msg)
-			io.WriteString(os.Stderr, "\n")
+			//log.Println(msg)
+			//io.WriteString(os.Stderr, msg)
+			//io.WriteString(os.Stderr, "\n")
+			fmt.Fprintf(os.Stderr, "%v\n", msg)
 		}
 	}
 }
