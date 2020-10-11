@@ -58,9 +58,6 @@ func SendSMS(sc SmsContent) {
 
 		if err != nil {
 			msg := fmt.Sprint(err) + ": " + stderr.String()
-			//log.Println(msg)
-			//io.WriteString(os.Stderr, msg)
-			//io.WriteString(os.Stderr, "\n")
 			fmt.Fprintf(os.Stderr, "%v\n", msg)
 		}
 	}
