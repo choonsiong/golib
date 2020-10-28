@@ -35,6 +35,7 @@ func PadWithZero(i int) string {
 }
 
 // NormalizeHour returns the hour (specified in the hr parameter) in local timezone (specified in the tz parameter).
+// Note that the function does not takes into account if the return hour fall in different date.
 func NormalizeHour(hr int, tz int) int {
 	newHour := hr + tz
 
