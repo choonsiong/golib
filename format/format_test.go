@@ -61,3 +61,47 @@ func TestNegativeTen(t *testing.T) {
 		t.Fatalf(`PadWithZero(%d) = %q, want "%v"`, n, result, want)
 	}
 }
+
+func TestPositiveTimezone(t *testing.T) {
+	hr := 16
+	tz := 8
+	want := 0
+	result := NormalizeHour(hr, tz)
+
+	if result != want {
+		t.Fatalf(`NormalizeHour(%d, %d) = %v, want "%v"`, hr, tz, result, want)
+	}
+}
+
+func TestPositiveRandomTimezone(t *testing.T) {
+	hr := 10
+	tz := 8
+	want := 18
+	result := NormalizeHour(hr, tz)
+
+	if result != want {
+		t.Fatalf(`NormalizeHour(%d, %d) = %v, want "%v"`, hr, tz, result, want)
+	}
+}
+
+func TestNegativeTimezone(t *testing.T) {
+	hr := 0
+	tz := -8
+	want := 16
+	result := NormalizeHour(hr, tz)
+
+	if result != want {
+		t.Fatalf(`NormalizeHour(%d, %d) = %v, want "%v"`, hr, tz, result, want)
+	}
+}
+
+func TestNegativeRandomTimezone(t *testing.T) {
+	hr := 5
+	tz := -11
+	want := 18
+	result := NormalizeHour(hr, tz)
+
+	if result != want {
+		t.Fatalf(`NormalizeHour(%d, %d) = %v, want "%v"`, hr, tz, result, want)
+	}
+}

@@ -33,3 +33,16 @@ func PadWithZero(i int) string {
 
 	return strconv.Itoa(i)
 }
+
+// NormalizeHour returns the hour (specified in the hr parameter) in local timezone (specified in the tz parameter).
+func NormalizeHour(hr int, tz int) int {
+	newHour := hr + tz
+
+	if newHour >= 24 {
+		return newHour - 24
+	} else if newHour <= 0 {
+		return newHour + 24
+	}
+
+	return newHour
+}
