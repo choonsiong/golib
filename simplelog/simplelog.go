@@ -26,13 +26,13 @@ import (
 	"os"
 )
 
-type SimpleLog struct {
+type LogFile struct {
 	FileName string // Log file name
 }
 
 // WriteAppend writes the byte slice to the end of a log file.
-func (s SimpleLog) WriteAppend(b []byte) (n int, err error) {
-	f, err := os.OpenFile(s.FileName, os.O_WRONLY, 0644)
+func (lf LogFile) WriteAppend(b []byte) (n int, err error) {
+	f, err := os.OpenFile(lf.FileName, os.O_WRONLY, 0644)
 
 	if err != nil {
 		return 0, err
