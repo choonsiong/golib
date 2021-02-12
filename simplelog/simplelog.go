@@ -22,7 +22,6 @@ package simplelog
 
 import (
 	"fmt"
-	"io"
 	"os"
 )
 
@@ -32,7 +31,7 @@ type LogFile struct {
 
 // WriteAppend writes the byte slice to the end of a log file.
 func (lf LogFile) WriteAppend(b []byte) (n int, err error) {
-	f, err := os.OpenFile(lf.FileName, os.O_WRONLY, 0644)
+	f, err := os.OpenFile(lf.FileName, os.O_APPEND|os.O_WRONLY, 0644)
 
 	if err != nil {
 		return 0, err
@@ -41,11 +40,11 @@ func (lf LogFile) WriteAppend(b []byte) (n int, err error) {
 	defer f.Close()
 
 	// Move to end of the file
-	_, err = f.Seek(0, io.SeekEnd)
+	//_, err = f.Seek(0, io.SeekEnd)
 
-	if err != nil {
-		return 0, err
-	}
+	//if err != nil {
+	//	return 0, err
+	//}
 
 	var w int
 
