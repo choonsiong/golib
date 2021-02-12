@@ -39,6 +39,7 @@ func (lf LogFile) WriteAppend(b []byte) (n int, err error) {
 
 	defer f.Close()
 
+	// Below is not required after we included the mode os.O_APPEND
 	// Move to end of the file
 	//_, err = f.Seek(0, io.SeekEnd)
 
