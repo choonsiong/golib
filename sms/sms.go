@@ -43,7 +43,7 @@ type Sms struct {
 func (s Sms) Send() (string, error) {
 	// Normalized sms text
 	t := strings.Replace(s.Text, " ", "+", -1) // replace whitespace with '+'
-	t = strings.Replace(t, "\n", "%A", -1) // replace newline with '%A'
+	t = strings.Replace(t, "\n", "+%A+", -1) // replace newline with '%A'
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
