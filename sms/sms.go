@@ -30,6 +30,10 @@ import (
 	"strings"
 )
 
+// Sms type provides a simplified way for the user to define all the
+// necessary information required for SMS sending. Furthermore, user
+// can enter normal text message (e.g. with spaces and newline characters)
+// without worrying about the sms text format.
 type Sms struct {
 	Host       string // hostname or ip of AGW server
 	Port       string // AGW listening port
