@@ -19,7 +19,7 @@ SOFTWARE.
 */
 
 // Package sms provides method for sending sms text message using the
-// NGM's AGW server.
+// NGM AGW server.
 package sms
 
 import (
@@ -31,9 +31,9 @@ import (
 )
 
 // Sms type provides a simplified way for the user to define all the
-// necessary information required for SMS sending. Furthermore, user
+// information required to send SMS via AGW server. Furthermore, user
 // can enter normal text message (e.g. with spaces and newline characters)
-// without worrying about the sms text format.
+// without worrying about formatting it correctly.
 type Sms struct {
 	Host       string // hostname or ip of AGW server
 	Port       string // AGW listening port
@@ -42,18 +42,18 @@ type Sms struct {
 	Recipients []string // msisdn list in international format
 }
 
-// Send sends a sms text message using the content of Sms struct.
+// Send sends a sms text message using the value of Sms struct.
 // Note: The caller is required to initialize Sms struct with correct values for all fields.
 func (s Sms) Send() (string, error) {
-	// Normalized sms text
-	t := strings.Replace(s.Text, " ", "+", -1) // replace whitespace with '+'
-	t = strings.Replace(t, "\n", "+%A+", -1) // replace newline with '%A'
+	// Normalized sms text (AGW expect the text in certain format)
+	smsText := strings.Replace(s.Text, " ", "+", -1) // replace whitespace with '+'
+	smsText = strings.Replace(smsText, "\n", "+%A+", -1) // replace newline with '%A'
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 
 	for _, r := range s.Recipients {
-		content := "http://" + s.Host + ":" + s.Port + "/send?sms_dest=" + r + "&sms_source=" + s.Sender + "&sms_valid_rel=500&sms_text=" + t + " HTTP/1.0"
+		content := "http://" + s.Host + ":" + s.Port + "/send?sms_dest=" + r + "&sms_source=" + s.Sender + "&sms_valid_rel=500&sms_text=" + smsText + " HTTP/1.0"
 
 		cmd := exec.Command("curl", content)
 		cmd.Stdout = &stdout
