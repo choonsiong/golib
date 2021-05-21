@@ -18,6 +18,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+// Package sms provides method for sending sms text message using the
+// NGM's AGW server.
 package sms
 
 import (
@@ -28,37 +30,38 @@ import (
 	"strings"
 )
 
-type SmsContent struct {
-	Host       string // hostname or ip
-	Port       string
-	Sender     string   // to identify the sms sender
-	Text       string   // sms text
-	Recipients []string // msisdn list of recipients
+type Sms struct {
+	Host       string // hostname or ip of AGW server
+	Port       string // AGW listening port
+	Sender     string // sms sender
+	Text       string // sms text
+	Recipients []string // msisdn list in international format
 }
 
-// SendSMS sends a text message using the content of SmsContent struct.
-// The caller is required to initialize SmsContent with correct values for all fields.
-// Furthermore, a preconfigured SMS server is required.
-func SendSMS(sc SmsContent) {
+// Send sends a sms text message using the content of Sms struct.
+// Note: The caller is required to initialize Sms struct with correct values for all fields.
+func (s Sms) Send() (string, error) {
 	// Normalized sms text
-	t := strings.Replace(sc.Text, " ", "+", -1) // replace whitespace with '+'
+	t := strings.Replace(s.Text, " ", "+", -1) // replace whitespace with '+'
+	t = strings.Replace(t, "\n", "%A", -1) // replace newline with '%A'
 
-	for _, r := range sc.Recipients {
-		content := "http://" + sc.Host + ":" + sc.Port + "/send?sms_dest=" + r + "&sms_source=" + sc.Sender + "&sms_valid_rel=500&sms_text=" + t + " HTTP/1.0"
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+
+	for _, r := range s.Recipients {
+		content := "http://" + s.Host + ":" + s.Port + "/send?sms_dest=" + r + "&sms_source=" + s.Sender + "&sms_valid_rel=500&sms_text=" + t + " HTTP/1.0"
 
 		cmd := exec.Command("curl", content)
-
-		var stdout bytes.Buffer
-		var stderr bytes.Buffer
-
 		cmd.Stdout = &stdout
 		cmd.Stderr = &stderr
 
 		err := cmd.Run()
 
 		if err != nil {
-			msg := fmt.Sprint(err) + ": " + stderr.String()
-			fmt.Fprintf(os.Stderr, "%v\n", msg)
+			fmt.Fprintf(os.Stderr, stderr.String())
+			return stdout.String(), err
 		}
 	}
+
+	return stdout.String(), nil
 }
