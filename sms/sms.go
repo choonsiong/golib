@@ -87,7 +87,7 @@ func (s Sms) processSmsRecipient(out chan<- SmsRecipient) {
 		if match.MatchString(v) {
 			r.MSISDN = v
 		} else {
-			fmt.Fprintf(os.Stderr, "sms.processSmsRecipient: invalid msisdn: %v", v)
+			fmt.Fprintf(os.Stderr, "sms.processSmsRecipient: invalid msisdn: %v\n", v)
 			continue
 		}
 
