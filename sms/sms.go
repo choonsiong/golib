@@ -18,76 +18,75 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Package sms provides method for sending sms text message using the
-// NGM AGW server.
+// Package sms provides methods for sending SMS text message.
 package sms
 
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
 )
 
-// Sms type provides a simplified way for the user to define all the
-// information required to send SMS via AGW server. Furthermore, user
-// can enter normal text message (e.g. with spaces and newline characters)
-// without worrying about formatting it correctly.
+// Sms contains all the required fields for sending SMS text message
+// via the AGW server. Note that the caller is required to initialize
+// the Sms type with all the required fields.
 type Sms struct {
-	Host       string // hostname or ip of AGW server
+	Host       string // AGW server hostname/ip
 	Port       string // AGW listening port
-	Sender     string // sms sender
-	Text       string // sms text
-	Recipients []string // msisdn list in international format
+	Sender     string // SMS sender
+	Text       string // SMS text
+	Recipients []string // MSISDN list in international format
 }
 
-// SmsRecipient type contains the details of a sms recipient.
+// SmsRecipient contains the information related to a SMS recipient.
 type SmsRecipient struct {
 	MSISDN string
 }
 
-// Process begin process the sms send request.
+// Process process the sms send request.
 func (s Sms) Process() {
 	smsRecipient := make(chan SmsRecipient)
 	smsStatus := make(chan SmsRecipient)
 
 	go s.processSmsRecipient(smsRecipient)
-	go s.sendSMS(smsRecipient, smsStatus)
+	go s.sendSms(smsRecipient, smsStatus)
 
 	s.printStatus(smsStatus)
 }
 
-// normalizedSmsText normalized the SMS text from user input.
-func normalizedSmsText(text string) string {
-	s := strings.Replace(text, " ", "+", -1) // replace whitespace with '+'
-	s = strings.Replace(s, "\n", "+%A+", -1) // replace newline with '%A'
-
-	return s
-}
-
-// printStatus prints the status of the sms sending.
+// printStatus prints the status of the sms sending request.
+// Note that due to how the AGW works, the program will not know
+// the delivery status of the SMS, therefore, caller should not
+// assume the status here means the SMS is delivered successfully
+// to the recipients.
 func (s Sms) printStatus(in <-chan SmsRecipient) {
 	var count int
+
 	for smsRecipient := range in {
-		fmt.Fprintf(os.Stdout, "%s\n", smsRecipient.MSISDN)
+		io.WriteString(os.Stdout, smsRecipient.MSISDN)
 		count++
 	}
+
+	fmt.Fprintf(os.Stdout, "Processed %d sms request.\n", count)
 }
 
-// processSmsRecipient process all the sms recipients.
+// processSmsRecipient verify and process all the sms recipients.
 func (s Sms) processSmsRecipient(out chan<- SmsRecipient) {
+	// Make sure MSISDN is valid, i.e. 601xxxxxxxx
 	grammar := "(601[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]?)"
 	match := regexp.MustCompile(grammar)
 
-	for _, v := range s.Recipients {
+	for _, msisdn := range s.Recipients {
 		var r SmsRecipient
 
-		if match.MatchString(v) {
-			r.MSISDN = v
+		if match.MatchString(msisdn) {
+			r.MSISDN = msisdn
 		} else {
-			fmt.Fprintf(os.Stderr, "sms.processSmsRecipient: invalid msisdn: %v\n", v)
+			fmt.Fprintf(os.Stderr, "sms.processSmsRecipient: invalid msisdn: %v\n", msisdn)
 			continue
 		}
 
@@ -97,8 +96,8 @@ func (s Sms) processSmsRecipient(out chan<- SmsRecipient) {
 	close(out)
 }
 
-// sendSMS send the sms to the sms recipient.
-func (s Sms) sendSMS(in <-chan SmsRecipient, out chan<- SmsRecipient) {
+// sendSms send the sms text message to the sms recipient.
+func (s Sms) sendSms(in <-chan SmsRecipient, out chan<- SmsRecipient) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 
@@ -112,7 +111,7 @@ func (s Sms) sendSMS(in <-chan SmsRecipient, out chan<- SmsRecipient) {
 		err := cmd.Run()
 
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "sms.sendSMS: %v: %v\n", err, stderr.String())
+			fmt.Fprintf(os.Stderr, "sms.sendSms: %v: %v\n", err, stderr.String())
 			continue
 		}
 
@@ -122,8 +121,15 @@ func (s Sms) sendSMS(in <-chan SmsRecipient, out chan<- SmsRecipient) {
 	close(out)
 }
 
-// Send sends a sms text message using the value of Sms struct.
-// Note: The caller is required to initialize Sms struct with correct values for all fields.
+// normalizedSmsText normalized the SMS text received from user.
+// The AGW server expected the SMS text in certain format, i.e. white space with '+'
+// and newline with '%A'.
+func normalizedSmsText(text string) string {
+	return strings.Replace(strings.Replace(text, " ", "+", -1), "\n", "+%A+", -1)
+}
+
+// Deprecated: 1.0.18
+// Send sends a sms text message.
 func (s Sms) Send() {
 	// Normalized sms text (AGW expect the text in certain format)
 	smsText := strings.Replace(s.Text, " ", "+", -1) // replace whitespace with '+'
