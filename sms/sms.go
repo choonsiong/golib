@@ -42,21 +42,21 @@ type Sms struct {
 	Recipients []string // msisdn list in international format
 }
 
+// SmsRecipient type contains the details of a sms recipient.
 type SmsRecipient struct {
 	MSISDN string
 }
 
-// Public Methods
-
+// Process begin process the sms send request.
 func (s Sms) Process() {
 	smsRecipient := make(chan SmsRecipient)
-	smsCount := make(chan int)
+	smsStatus := make(chan SmsRecipient)
+
 	go s.processSmsRecipient(smsRecipient)
-	go s.sendSMS(smsRecipient, smsCount)
+	go s.sendSMS(smsRecipient, smsStatus)
 
+	s.printStatus(smsStatus)
 }
-
-// Private Methods
 
 // normalizedSmsText normalized the SMS text from user input.
 func normalizedSmsText(text string) string {
@@ -66,20 +66,16 @@ func normalizedSmsText(text string) string {
 	return s
 }
 
-func (s Sms) checkCount(in <-chan int) {
-	var runningCount int
-
-	for i := range in {
-		runningCount = i
-	}
-
-	if runningCount != len(s.Recipients) {
-		fmt.Fprintf(os.Stdout, "Failed to send to all recipients: %i/%i\n", runningCount, len(s.Recipients))
-	} else {
-		fmt.Fprintf(os.Stdout, "SMS sent to all recipients successfully.\n")
+// printStatus prints the status of the sms sending.
+func (s Sms) printStatus(in <-chan SmsRecipient) {
+	var count int
+	for smsRecipient := range in {
+		fmt.Fprintf(os.Stdout, "%s sent\n", smsRecipient.MSISDN)
+		count++
 	}
 }
 
+// processSmsRecipient process all the sms recipients.
 func (s Sms) processSmsRecipient(out chan<- SmsRecipient) {
 	for _, v := range s.Recipients {
 		var r SmsRecipient
@@ -90,10 +86,10 @@ func (s Sms) processSmsRecipient(out chan<- SmsRecipient) {
 	close(out)
 }
 
-func (s Sms) sendSMS(in <-chan SmsRecipient, out chan<- int) {
+// sendSMS send the sms to the sms recipient.
+func (s Sms) sendSMS(in <-chan SmsRecipient, out chan<- SmsRecipient) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	var count int
 
 	for smsRecipient := range in {
 		smsContent := "http://" + s.Host + ":" + s.Port + "/send?sms_dest=" + smsRecipient.MSISDN + "&sms_source=" + s.Sender + "&sms_valid_rel=500&sms_text=" + normalizedSmsText(s.Text) + " HTTP/1.0"
@@ -109,8 +105,7 @@ func (s Sms) sendSMS(in <-chan SmsRecipient, out chan<- int) {
 			continue
 		}
 
-		count += 1
-		out<- count
+		out<- smsRecipient
 	}
 
 	close(out)
