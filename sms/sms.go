@@ -42,9 +42,83 @@ type Sms struct {
 	Recipients []string // msisdn list in international format
 }
 
+type SmsRecipient struct {
+	MSISDN string
+}
+
+// Public Methods
+
+func (s Sms) Process() {
+	smsRecipient := make(chan SmsRecipient)
+	smsCount := make(chan int)
+	go s.processSmsRecipient(smsRecipient)
+	go s.sendSMS(smsRecipient, smsCount)
+
+}
+
+// Private Methods
+
+// normalizedSmsText normalized the SMS text from user input.
+func normalizedSmsText(text string) string {
+	s := strings.Replace(text, " ", "+", -1) // replace whitespace with '+'
+	s = strings.Replace(s, "\n", "+%A+", -1) // replace newline with '%A'
+
+	return s
+}
+
+func (s Sms) checkCount(in <-chan int) {
+	var runningCount int
+
+	for i := range in {
+		runningCount = i
+	}
+
+	if runningCount != len(s.Recipients) {
+		fmt.Fprintf(os.Stdout, "Failed to send to all recipients: %i/%i\n", runningCount, len(s.Recipients))
+	} else {
+		fmt.Fprintf(os.Stdout, "SMS sent to all recipients successfully.\n")
+	}
+}
+
+func (s Sms) processSmsRecipient(out chan<- SmsRecipient) {
+	for _, v := range s.Recipients {
+		var r SmsRecipient
+		r.MSISDN = v
+		out<- r
+	}
+
+	close(out)
+}
+
+func (s Sms) sendSMS(in <-chan SmsRecipient, out chan<- int) {
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	var count int
+
+	for smsRecipient := range in {
+		smsContent := "http://" + s.Host + ":" + s.Port + "/send?sms_dest=" + smsRecipient.MSISDN + "&sms_source=" + s.Sender + "&sms_valid_rel=500&sms_text=" + normalizedSmsText(s.Text) + " HTTP/1.0"
+
+		cmd := exec.Command("curl", smsContent)
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
+
+		err := cmd.Run()
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "sms.sendSMS: %v: %v\n", err, stderr.String())
+			continue
+		}
+
+		count += 1
+		out<- count
+	}
+
+	close(out)
+}
+
 // Send sends a sms text message using the value of Sms struct.
 // Note: The caller is required to initialize Sms struct with correct values for all fields.
-func (s Sms) Send() (string, error) {
+func (s Sms) Send() {
 	// Normalized sms text (AGW expect the text in certain format)
 	smsText := strings.Replace(s.Text, " ", "+", -1) // replace whitespace with '+'
 	smsText = strings.Replace(smsText, "\n", "+%A+", -1) // replace newline with '%A'
@@ -62,10 +136,8 @@ func (s Sms) Send() (string, error) {
 		err := cmd.Run()
 
 		if err != nil {
-			fmt.Fprintf(os.Stderr, stderr.String())
-			return stdout.String(), err
+			fmt.Fprintf(os.Stderr, "sms.Send: %v: %v\n", err, stderr.String())
+			continue
 		}
 	}
-
-	return stdout.String(), nil
 }
