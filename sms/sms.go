@@ -67,7 +67,7 @@ func (s Sms) printStatus(in <-chan SmsRecipient) {
 	var count int
 
 	for smsRecipient := range in {
-		io.WriteString(os.Stdout, smsRecipient.MSISDN)
+		io.WriteString(os.Stdout, smsRecipient.MSISDN + "\n")
 		count++
 	}
 
