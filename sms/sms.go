@@ -27,6 +27,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
@@ -70,16 +71,26 @@ func normalizedSmsText(text string) string {
 func (s Sms) printStatus(in <-chan SmsRecipient) {
 	var count int
 	for smsRecipient := range in {
-		fmt.Fprintf(os.Stdout, "%s sent\n", smsRecipient.MSISDN)
+		fmt.Fprintf(os.Stdout, "%s\n", smsRecipient.MSISDN)
 		count++
 	}
 }
 
 // processSmsRecipient process all the sms recipients.
 func (s Sms) processSmsRecipient(out chan<- SmsRecipient) {
+	grammar := "(601[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]?)"
+	match := regexp.MustCompile(grammar)
+
 	for _, v := range s.Recipients {
 		var r SmsRecipient
-		r.MSISDN = v
+
+		if match.MatchString(v) {
+			r.MSISDN = v
+		} else {
+			fmt.Fprintf(os.Stderr, "sms.processSmsRecipient: invalid msisdn: %v", v)
+			continue
+		}
+
 		out<- r
 	}
 
