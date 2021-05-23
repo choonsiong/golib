@@ -121,12 +121,11 @@ func (s Sms) sendSms(in <-chan SmsRecipient, out chan<- SmsRecipient) {
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "sms.sendSms: %v: %v\n", err, stderr.String())
 			}
-
-			out<- smsRecipient
+			
 			wg.Done()
 		}()
 
-		//out<- smsRecipient
+		out<- smsRecipient
 	}
 
 	close(out)
