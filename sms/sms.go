@@ -29,6 +29,7 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
+	"sync"
 )
 
 // Sms contains all the required fields for sending SMS text message
@@ -47,6 +48,8 @@ type SmsRecipient struct {
 	MSISDN string
 }
 
+var wg sync.WaitGroup
+
 // Process process the sms send request.
 func (s Sms) Process() {
 	smsRecipient := make(chan SmsRecipient)
@@ -56,6 +59,8 @@ func (s Sms) Process() {
 	go s.sendSms(smsRecipient, smsStatus)
 
 	s.printStatus(smsStatus)
+
+	wg.Wait()
 }
 
 // printStatus prints the status of the sms sending request.
@@ -102,18 +107,23 @@ func (s Sms) sendSms(in <-chan SmsRecipient, out chan<- SmsRecipient) {
 	var stderr bytes.Buffer
 
 	for smsRecipient := range in {
-		smsContent := "http://" + s.Host + ":" + s.Port + "/send?sms_dest=" + smsRecipient.MSISDN + "&sms_source=" + s.Sender + "&sms_valid_rel=500&sms_text=" + normalizedSmsText(s.Text) + " HTTP/1.0"
+		wg.Add(1)
 
-		cmd := exec.Command("curl", smsContent)
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
+		go func() {
+			smsContent := "http://" + s.Host + ":" + s.Port + "/send?sms_dest=" + smsRecipient.MSISDN + "&sms_source=" + s.Sender + "&sms_valid_rel=500&sms_text=" + normalizedSmsText(s.Text) + " HTTP/1.0"
 
-		err := cmd.Run()
+			cmd := exec.Command("curl", smsContent)
+			cmd.Stdout = &stdout
+			cmd.Stderr = &stderr
 
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "sms.sendSms: %v: %v\n", err, stderr.String())
-			continue
-		}
+			err := cmd.Run()
+
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "sms.sendSms: %v: %v\n", err, stderr.String())
+			}
+
+			wg.Done()
+		}()
 
 		out<- smsRecipient
 	}
