@@ -1,3 +1,4 @@
+// Package jsonlog implements json format logging.
 package jsonlog
 
 import (
