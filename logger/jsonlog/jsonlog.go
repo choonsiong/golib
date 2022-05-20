@@ -4,7 +4,6 @@ package jsonlog
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"os"
 	"runtime/debug"
 	"sync"
@@ -73,7 +72,7 @@ func (l *Logger) print(level Level, message string, properties map[string]string
 	if level >= LevelError {
 		aux.Trace = string(debug.Stack())
 		// Print it to console (it is a bit difficult to read the trace in JSON format :p
-		log.Println(string(debug.Stack()))
+		//log.Println(string(debug.Stack()))
 	}
 
 	// To hold the actual log entry text.
