@@ -1,7 +1,7 @@
 package jsonlog
 
 import (
-	"fmt"
+	"errors"
 	"strings"
 )
 
@@ -15,6 +15,10 @@ const (
 	LevelFatal                // 3
 	LevelOff     = 99
 	LevelInvalid = -1
+)
+
+var (
+	ErrUnknownLogLevel = errors.New("unknown log level")
 )
 
 // String returns a human-friendly string for the severity level.
@@ -50,7 +54,9 @@ func LogLevel(level string) (Level, error) {
 		return LevelFatal, nil
 	case "off":
 		return LevelOff, nil
+	case "invalid":
+		return LevelInvalid, nil
 	default:
-		return LevelInvalid, fmt.Errorf("invalid log level")
+		return LevelInvalid, ErrUnknownLogLevel
 	}
 }
