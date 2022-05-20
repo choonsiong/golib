@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// NeedFilename returns the filename from the command-line argument.
+// NeedFilename returns the filename from os.Args.
 func NeedFilename() (string, error) {
 	if len(os.Args) != 2 {
 		return "", errors.New("please provide a filename")
