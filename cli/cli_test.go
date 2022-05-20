@@ -6,19 +6,33 @@ import (
 	"testing"
 )
 
-func TestNeedFilename_ValidArgument(t *testing.T) {
-	args := []string{"command", "foo.txt"}
-
-	want := "foo.txt"
-
-	filename, err := NeedFilename(args)
-	if err != nil {
-		if !errors.Is(err, ErrInvalidArgument) {
-			t.Fatalf("NeedFileName(), want %q, but got %q", ErrInvalidArgument, err)
-		}
+func TestNeedFilename(t *testing.T) {
+	cases := []struct {
+		name    string
+		args    []string
+		want    string
+		wantErr error
+	}{
+		{"valid argument", []string{"command", "foo.txt"}, "foo.txt", nil},
+		{"invalid argument", []string{"command"}, "", ErrInvalidArgument},
 	}
 
-	if strings.Compare(want, filename) != 0 {
-		t.Errorf("NeedFilename(), want %q, but got %q", want, filename)
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got, err := NeedFilename(c.args)
+
+			if c.wantErr != nil {
+				if err == nil {
+					t.Errorf("NeedFilename(), want %q, but got nil", c.wantErr)
+				}
+				if !errors.Is(err, c.wantErr) {
+					t.Errorf("NeedFilename(), want %q, but got %q", c.wantErr, err)
+				}
+			}
+
+			if strings.Compare(got, c.want) != 0 {
+				t.Errorf("NeedFilename() == %q, want %q", got, c.want)
+			}
+		})
 	}
 }

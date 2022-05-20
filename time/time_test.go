@@ -30,7 +30,7 @@ func TestNormalizeHourInTimezone(t *testing.T) {
 				}
 
 				if !errors.Is(err, c.wantErr) {
-					t.Errorf("NormalizeHourInTimezone(%q, %q), want %q, but got %q", c.hr, c.tz, c.wantErr, got)
+					t.Errorf("NormalizeHourInTimezone(%q, %q), want %q, but got %q", c.hr, c.tz, c.wantErr, err)
 				}
 			}
 
