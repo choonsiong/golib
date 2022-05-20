@@ -1,3 +1,4 @@
+// Package cli implements helpers to work with command-line interface.
 package cli
 
 import (
