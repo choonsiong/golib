@@ -6,8 +6,8 @@ import (
 	"strconv"
 )
 
-// PadZeroToNineWithZero returns a string with its argument int padded with '0' in front.
-// For example: '0' => '00', '1' => '01'...
+// PadZeroToNineWithZero pad i with '0' in front.
+// For example: '0' => '00', '1' => '01' ... '9' => '09'
 func PadZeroToNineWithZero(i int) string {
 	i = int(math.Abs(float64(i)))
 

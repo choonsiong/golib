@@ -1,4 +1,4 @@
-// Package time implements various functions to work on time.
+// Package time implements various functions to work with time.
 package time
 
 import "errors"

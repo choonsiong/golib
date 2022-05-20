@@ -1,4 +1,4 @@
-// Package sms implements functions for short messaging services.
+// Package sms provides helpers to work with sms.
 package sms
 
 import (
@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// Sms is used to store various information needed to use methods from Sms type.
+// SMS stores various information needed for the SMS type.
 type SMS struct {
 	Host       string   // sms server hostname or ip
 	Port       string   // sms server port number
