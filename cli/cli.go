@@ -2,13 +2,17 @@ package cli
 
 import (
 	"errors"
-	"os"
 )
 
-// NeedFilename returns the filename from os.Args.
-func NeedFilename() (string, error) {
-	if len(os.Args) != 2 {
-		return "", errors.New("please provide a filename")
+var (
+	ErrInvalidArgument = errors.New("invalid command-line arguments")
+)
+
+// NeedFilename returns the filename from s, s should be pass in as os.Args.
+func NeedFilename(s []string) (string, error) {
+	if len(s) != 2 {
+		return "", ErrInvalidArgument
 	}
-	return os.Args[1], nil
+
+	return s[1], nil
 }
