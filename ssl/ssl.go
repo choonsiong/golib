@@ -16,10 +16,9 @@ type SSL struct {
 	CertPath     string
 	KeyName      string
 	KeyPath      string
-	Hostname     string
 	Country      string
-	Location     string
 	State        string
+	Location     string
 	Organization string
 	CommonName   string
 	Days         string
