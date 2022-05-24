@@ -5,10 +5,10 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/choonsiong/golib/file"
 	"github.com/choonsiong/golib/logger/jsonlog"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 type SSL struct {
@@ -54,7 +54,7 @@ func (s *SSL) Generate() error {
 		"KeyPath":  s.KeyPath,
 	})
 
-	if _, err := isFileExists("openssl"); err != nil {
+	if _, err := file.Exists("openssl"); err != nil {
 		return errors.New(fmt.Sprintf("SSL.Generate(): %v", err))
 	}
 
@@ -96,31 +96,4 @@ func (s *SSL) Generate() error {
 	}
 
 	return nil
-}
-
-// isFileExists return true if the filename is an executable and exists in the user PATH.
-func isFileExists(filename string) (bool, error) {
-	found := false
-
-	path := os.Getenv("PATH")
-	pathSlice := strings.Split(path, ":")
-
-	for _, dir := range pathSlice {
-		fullPath := dir + "/" + filename
-		fileInfo, err := os.Stat(fullPath)
-		if err == nil { // found!
-			mode := fileInfo.Mode()
-			if mode.IsRegular() {
-				if mode&0111 != 0 {
-					found = true
-				}
-			}
-		}
-	}
-
-	if !found {
-		return false, errors.New(fmt.Sprintf("%s not found", filename))
-	}
-
-	return found, nil
 }
