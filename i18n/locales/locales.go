@@ -1,3 +1,4 @@
+// Package locales provides helpers to work with locales.
 package locales
 
 import (
