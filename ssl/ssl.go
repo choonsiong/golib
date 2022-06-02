@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/choonsiong/golib/file"
 	"github.com/choonsiong/golib/logger/jsonlog"
 	"os"
 	"os/exec"
@@ -53,7 +52,11 @@ func (s *SSL) Generate() error {
 		"KeyPath":  s.KeyPath,
 	})
 
-	if _, err := file.Exists("openssl"); err != nil {
+	//if _, err := file.Exists("openssl"); err != nil {
+	//	return errors.New(fmt.Sprintf("SSL.Generate(): %v", err))
+	//}
+	
+	if _, err := exec.LookPath("openssl"); err != nil {
 		return errors.New(fmt.Sprintf("SSL.Generate(): %v", err))
 	}
 
