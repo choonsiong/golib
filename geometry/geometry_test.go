@@ -29,5 +29,29 @@ func TestSlope(t *testing.T) {
 }
 
 func TestMidpoint(t *testing.T) {
-	// testing..
+	tests := []struct {
+		name        string
+		coordinateA CoordinateXY
+		coordinateB CoordinateXY
+		midpointX   float64
+		midpointY   float64
+	}{
+		{"positive valid", CoordinateXY{0, 0}, CoordinateXY{10, 10}, 5, 5},
+		{"negative valid", CoordinateXY{0, 0}, CoordinateXY{-10, -10}, -5, -5},
+		{"vertical line", CoordinateXY{0, 10}, CoordinateXY{0, 0}, 0, 5},
+		{"horizontal line", CoordinateXY{0, 0}, CoordinateXY{10, 0}, 5, 0},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			wantX, wantY := Midpoint(tt.coordinateA, tt.coordinateB)
+			if tt.midpointX != wantX {
+				t.Errorf("want midpoint x %v; got %v", tt.midpointX, wantX)
+			}
+
+			if tt.midpointY != wantY {
+				t.Errorf("want midpoint y %v; got %v", tt.midpointY, wantY)
+			}
+		})
+	}
 }
