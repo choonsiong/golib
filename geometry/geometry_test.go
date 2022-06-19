@@ -27,3 +27,7 @@ func TestSlope(t *testing.T) {
 		})
 	}
 }
+
+func TestMidpoint(t *testing.T) {
+	//
+}
