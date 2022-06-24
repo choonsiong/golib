@@ -159,3 +159,31 @@ func TestMidpoint3D(t *testing.T) {
 		})
 	}
 }
+
+func TestEndPoint3D(t *testing.T) {
+	tests := []struct {
+		name        string
+		coordinateA Coordinate3D
+		midpoint    Coordinate3D
+		wantX       float64
+		wantY       float64
+		wantZ       float64
+	}{
+		{"zero", Coordinate3D{0, 0, 0}, Coordinate3D{0, 0, 0}, 0, 0, 0},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotX, gotY, gotZ := EndPoint3D(tt.coordinateA, tt.midpoint)
+			if tt.wantX != gotX {
+				t.Errorf("want %v; got %v", tt.wantX, gotX)
+			}
+			if tt.wantY != gotY {
+				t.Errorf("want %v; got %v", tt.wantY, gotY)
+			}
+			if tt.wantZ != gotZ {
+				t.Errorf("want %v; got %v", tt.wantZ, gotZ)
+			}
+		})
+	}
+}
