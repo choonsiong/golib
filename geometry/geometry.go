@@ -62,6 +62,11 @@ func Midpoint3D(a Coordinate3D, b Coordinate3D) (float64, float64, float64) {
 	return x, y, z
 }
 
+// EndPointB returns the endpoint B with given endpoint A and midpoint M.
+func (a Coordinate3D) EndPointB(m Coordinate3D) (float64, float64, float64) {
+	return EndPoint3D(a, m)
+}
+
 // EndPoint3D returns the endpoint B with given endpoint A and midpoint M.
 func EndPoint3D(a Coordinate3D, m Coordinate3D) (float64, float64, float64) {
 	x := (m.X * 2) - a.X

@@ -170,11 +170,28 @@ func TestEndPoint3D(t *testing.T) {
 		wantZ       float64
 	}{
 		{"zero", Coordinate3D{0, 0, 0}, Coordinate3D{0, 0, 0}, 0, 0, 0},
+		{"positive", Coordinate3D{0, 0, 0}, Coordinate3D{5, 5, 5}, 10, 10, 10},
+		{"negative", Coordinate3D{0, 0, 0}, Coordinate3D{-5, -5, -5}, -10, -10, -10},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotX, gotY, gotZ := EndPoint3D(tt.coordinateA, tt.midpoint)
+			if tt.wantX != gotX {
+				t.Errorf("want %v; got %v", tt.wantX, gotX)
+			}
+			if tt.wantY != gotY {
+				t.Errorf("want %v; got %v", tt.wantY, gotY)
+			}
+			if tt.wantZ != gotZ {
+				t.Errorf("want %v; got %v", tt.wantZ, gotZ)
+			}
+		})
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotX, gotY, gotZ := tt.coordinateA.EndPointB(tt.midpoint)
 			if tt.wantX != gotX {
 				t.Errorf("want %v; got %v", tt.wantX, gotX)
 			}
