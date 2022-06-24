@@ -1,4 +1,4 @@
-// Package cli provides helpers to work with command-line interface.
+// Package cli provides helpers to work with command-line.
 package cli
 
 import (
@@ -6,7 +6,8 @@ import (
 )
 
 var (
-	ErrInvalidArgument = errors.New("invalid command-line arguments")
+	ErrInsufficientArguments = errors.New("cli: insufficient command-line arguments")
+	ErrInvalidArgument       = errors.New("cli: invalid command-line arguments")
 )
 
 // NeedFilename returns the filename from s, s should be pass in as os.Args.
