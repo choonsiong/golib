@@ -38,9 +38,19 @@ func Midpoint(a Coordinate2D, b Coordinate2D) (float64, float64) {
 	return x, y
 }
 
+// Distance returns the distance of endpoints A and B in three-dimensional space.
+func (a Coordinate3D) Distance(b Coordinate3D) float64 {
+	return Distance3D(a, b)
+}
+
 // Distance3D returns the distance of endpoints A and B in three-dimensional space.
 func Distance3D(a Coordinate3D, b Coordinate3D) float64 {
 	return math.Sqrt(math.Pow(a.X-b.X, 2) + math.Pow(a.Y-b.Y, 2) + math.Pow(a.Z-b.Z, 2))
+}
+
+// Midpoint returns the midpoint of endpoints A and B in three-dimensional space.
+func (a Coordinate3D) Midpoint(b Coordinate3D) (float64, float64, float64) {
+	return Midpoint3D(a, b)
 }
 
 // Midpoint3D returns the midpoint of endpoints A and B in three-dimensional space.
@@ -52,8 +62,8 @@ func Midpoint3D(a Coordinate3D, b Coordinate3D) (float64, float64, float64) {
 	return x, y, z
 }
 
-// CoordinateForMidPoint3D returns the endpoint B with given endpoint A and midpoint M.
-func CoordinateForMidPoint3D(a Coordinate3D, m Coordinate3D) (float64, float64, float64) {
+// EndPoint3D returns the endpoint B with given endpoint A and midpoint M.
+func EndPoint3D(a Coordinate3D, m Coordinate3D) (float64, float64, float64) {
 	x := (m.X * 2) - a.X
 	y := (m.Y * 2) - a.Y
 	z := (m.Z * 2) - a.Z
