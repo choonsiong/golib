@@ -92,9 +92,6 @@ func tripletToBinary(triplet string) (string, error) {
 	if triplet == "r--" {
 		return "100", nil
 	}
-	if triplet == "--x" {
-		return "001", nil
-	}
 	if triplet == "rw-" {
 		return "110", nil
 	}

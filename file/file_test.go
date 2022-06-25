@@ -124,7 +124,6 @@ func Test_tripletToBinary(t *testing.T) {
 		{"---", "---", "000", nil},
 		{"r-x", "r-x", "101", nil},
 		{"r--", "r--", "100", nil},
-		{"--x", "--x", "001", nil},
 		{"rw-", "rw-", "110", nil},
 		{"-w-", "-w-", "010", nil},
 		{"empty", "", "", ErrInvalidTriplet},
