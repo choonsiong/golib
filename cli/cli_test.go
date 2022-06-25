@@ -32,7 +32,7 @@ func TestFilename(t *testing.T) {
 			}
 
 			if strings.Compare(tt.want, got) != 0 {
-				t.Errorf("want %q; got %q", tt.want, got)
+				t.Errorf("Filename(%q) == %q; want %q", tt.args, got, tt.want)
 			}
 		})
 	}

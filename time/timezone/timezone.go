@@ -12,8 +12,8 @@ type Timezone struct {
 }
 
 var (
-	ErrTimezoneIsEmpty    = errors.New("timezone is empty")
-	ErrNoMatchingTimezone = errors.New("no matching timezone found")
+	ErrTimezoneIsEmpty    = errors.New("timezone: timezone is empty")
+	ErrNoMatchingTimezone = errors.New("timezone: no matching timezone found")
 )
 
 var timezone = map[string]string{
@@ -566,7 +566,7 @@ var timezone = map[string]string{
 	"UTC+14":                           "UTC+14",
 }
 
-// New returns a new Timezone.
+// New returns a new pointer to Timezone.
 func New(logger *jsonlog.Logger) *Timezone {
 	return &Timezone{
 		Logger:    logger,
