@@ -7,6 +7,10 @@ import (
 	"net/http"
 )
 
+var (
+	ErrMultipleJSONValue = errors.New("json: body must have only a single json value")
+)
+
 func ReadJSON(w http.ResponseWriter, r *http.Request, data interface{}) error {
 	maxBytes := 1048576 // 1MB
 	r.Body = http.MaxBytesReader(w, r.Body, int64(maxBytes))
@@ -17,7 +21,7 @@ func ReadJSON(w http.ResponseWriter, r *http.Request, data interface{}) error {
 	}
 	err = d.Decode(&struct{}{})
 	if err != io.EOF {
-		return errors.New("body must have only a single json value")
+		return ErrMultipleJSONValue
 	}
 	return nil
 }
