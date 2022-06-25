@@ -1,3 +1,4 @@
+// Package geometry provides helpers to work with geometry.
 package geometry
 
 import "math"
