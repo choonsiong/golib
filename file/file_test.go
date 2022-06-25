@@ -32,7 +32,7 @@ func TestIsExecutableInPath(t *testing.T) {
 			}
 
 			if tt.want != got {
-				t.Errorf("want %v; got %v", tt.want, got)
+				t.Errorf("IsExecutableInPath(%q) == %v; want %v", tt.filename, got, tt.want)
 			}
 		})
 	}
@@ -70,7 +70,7 @@ func TestBinaryMode(t *testing.T) {
 			}
 
 			if tt.want != got {
-				t.Errorf("want %q; got %q", tt.want, got)
+				t.Errorf("BinaryMode(%q) == %q; want %q", tt.filename, got, tt.want)
 			}
 		})
 	}
@@ -105,7 +105,7 @@ func Test_convertToBinary(t *testing.T) {
 			}
 
 			if tt.want != got {
-				t.Errorf("want %q; got %q", tt.want, got)
+				t.Errorf("convertToBinary(%q) == %q; want %q", tt.permissions, got, tt.want)
 			}
 		})
 	}
@@ -144,7 +144,7 @@ func Test_tripletToBinary(t *testing.T) {
 			}
 
 			if tt.want != got {
-				t.Errorf("want %q; got %q", tt.want, got)
+				t.Errorf("tripletToBinary(%q) == %q; want %q", tt.triplet, got, tt.want)
 			}
 		})
 	}

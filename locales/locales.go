@@ -1,4 +1,4 @@
-// Package locales provides helpers to work with locales.
+// Package locales provides helpers to work with different locales.
 package locales
 
 import (
@@ -11,8 +11,8 @@ type Locale struct {
 }
 
 var (
-	ErrEmptyInput       = errors.New("input is empty")
-	ErrNoMatchingLocale = errors.New("no matching locale found")
+	ErrEmptyInput       = errors.New("locales: input is empty")
+	ErrNoMatchingLocale = errors.New("locales: no matching locale found")
 )
 
 var locale = map[string]string{
@@ -586,6 +586,10 @@ var locale = map[string]string{
 
 // New returns a new pointer to type Locale.
 func New(logger *jsonlog.Logger) *Locale {
+	if logger == nil {
+		return nil
+	}
+
 	return &Locale{
 		Logger: logger,
 	}
