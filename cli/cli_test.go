@@ -6,32 +6,33 @@ import (
 	"testing"
 )
 
-func TestNeedFilename(t *testing.T) {
+func TestFilename(t *testing.T) {
 	cases := []struct {
 		name    string
 		args    []string
 		want    string
 		wantErr error
 	}{
-		{"valid argument", []string{"command", "foo.txt"}, "foo.txt", nil},
-		{"invalid argument", []string{"command"}, "", ErrInvalidArgument},
+		{"with filename", []string{"command", "foo.txt"}, "foo.txt", nil},
+		{"without filename", []string{"command"}, "", ErrInsufficientArguments},
+		{"empty filename", []string{"command", ""}, "", nil},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			got, err := NeedFilename(c.args)
+			got, err := Filename(c.args)
 
 			if c.wantErr != nil {
 				if err == nil {
-					t.Errorf("NeedFilename(), want %q, but got nil", c.wantErr)
+					t.Errorf("want error %q; got nil", c.wantErr)
 				}
 				if !errors.Is(err, c.wantErr) {
-					t.Errorf("NeedFilename(), want %q, but got %q", c.wantErr, err)
+					t.Errorf("want error %q; got %q", c.wantErr, err)
 				}
 			}
 
 			if strings.Compare(got, c.want) != 0 {
-				t.Errorf("NeedFilename() == %q, want %q", got, c.want)
+				t.Errorf("want %q; got %q", c.want, got)
 			}
 		})
 	}

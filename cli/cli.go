@@ -10,10 +10,11 @@ var (
 	ErrInvalidArgument       = errors.New("cli: invalid command-line arguments")
 )
 
-// NeedFilename returns the filename from s, s should be pass in as os.Args.
-func NeedFilename(s []string) (string, error) {
+// Filename returns the filename from command-line arguments slice s,
+// s should be pass in as os.Args.
+func Filename(s []string) (string, error) {
 	if len(s) != 2 {
-		return "", ErrInvalidArgument
+		return "", ErrInsufficientArguments
 	}
 
 	return s[1], nil
