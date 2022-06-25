@@ -26,7 +26,7 @@ func TestLevel_String(t *testing.T) {
 			got := c.level.String()
 
 			if strings.Compare(got, c.want) != 0 {
-				t.Errorf("Level.String() == %q, want %q", got, c.want)
+				t.Errorf("Level.String() == %q; want %q", got, c.want)
 			}
 		})
 	}
@@ -54,15 +54,15 @@ func TestLogLevel(t *testing.T) {
 
 			if c.wantErr != nil {
 				if err == nil {
-					t.Errorf("LogLevel(%q), want %q, but got nil", c.level, c.wantErr)
+					t.Errorf("LogLevel(%q) == nil; want %q", c.level, c.wantErr)
 				}
 				if !errors.Is(err, c.wantErr) {
-					t.Errorf("LogLevel(%q), want %q, but got %q", c.level, c.wantErr, err)
+					t.Errorf("LogLevel(%q) == %q; want %q", c.level, err, c.wantErr)
 				}
 			}
 
 			if got != c.want {
-				t.Errorf("LogLevel(%q) == %q, want %q", c.level, got, c.want)
+				t.Errorf("LogLevel(%q) == %q; want %q", c.level, got, c.want)
 			}
 		})
 	}
