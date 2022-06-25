@@ -3,7 +3,7 @@ package format
 import "testing"
 
 func TestPadZeroToNineWithZero(t *testing.T) {
-	cases := []struct {
+	tests := []struct {
 		name string
 		in   int
 		want string
@@ -15,12 +15,12 @@ func TestPadZeroToNineWithZero(t *testing.T) {
 		{"hundred", 100, "100"},
 	}
 
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			got := PadZeroToNineWithZero(c.in)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := PadZeroToNineWithZero(tt.in)
 
-			if got != c.want {
-				t.Errorf("PadIntWithZero(%q) == %q, want %q", c.in, got, c.want)
+			if got != tt.want {
+				t.Errorf("PadIntWithZero(%q) == %q; want %q", tt.in, got, tt.want)
 			}
 		})
 
@@ -28,7 +28,7 @@ func TestPadZeroToNineWithZero(t *testing.T) {
 }
 
 func TestLeftPaddingWithSize(t *testing.T) {
-	cases := []struct {
+	tests := []struct {
 		name      string
 		length    int
 		source    string
@@ -41,19 +41,19 @@ func TestLeftPaddingWithSize(t *testing.T) {
 		{"negative", -10, "hello", "*", "hello"},
 	}
 
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			got := LeftPaddingWithSize(c.length, c.source, c.character)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := LeftPaddingWithSize(tt.length, tt.source, tt.character)
 
-			if got != c.want {
-				t.Errorf("LeftPaddingWithSize(%d, %q, %q) == %q, want %q", c.length, c.source, c.character, got, c.want)
+			if got != tt.want {
+				t.Errorf("LeftPaddingWithSize(%d, %q, %q) == %q; want %q", tt.length, tt.source, tt.character, got, tt.want)
 			}
 		})
 	}
 }
 
 func TestRightPaddingWithSize(t *testing.T) {
-	cases := []struct {
+	tests := []struct {
 		name      string
 		length    int
 		source    string
@@ -66,12 +66,12 @@ func TestRightPaddingWithSize(t *testing.T) {
 		{"negative", -10, "hello", "*", "hello"},
 	}
 
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			got := RightPaddingWithSize(c.length, c.source, c.character)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := RightPaddingWithSize(tt.length, tt.source, tt.character)
 
-			if got != c.want {
-				t.Errorf("RightPaddingWithSize(%d, %q, %q) == %q, want %q", c.length, c.source, c.character, got, c.want)
+			if got != tt.want {
+				t.Errorf("RightPaddingWithSize(%d, %q, %q) == %q; want %q", tt.length, tt.source, tt.character, got, tt.want)
 			}
 		})
 	}
