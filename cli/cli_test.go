@@ -7,7 +7,7 @@ import (
 )
 
 func TestFilename(t *testing.T) {
-	cases := []struct {
+	tests := []struct {
 		name    string
 		args    []string
 		want    string
@@ -18,21 +18,21 @@ func TestFilename(t *testing.T) {
 		{"empty filename", []string{"command", ""}, "", nil},
 	}
 
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			got, err := Filename(c.args)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := Filename(tt.args)
 
-			if c.wantErr != nil {
+			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %q; got nil", c.wantErr)
+					t.Errorf("want error %q; got nil", tt.wantErr)
 				}
-				if !errors.Is(err, c.wantErr) {
-					t.Errorf("want error %q; got %q", c.wantErr, err)
+				if !errors.Is(tt.wantErr, err) {
+					t.Errorf("want error %q; got %q", tt.wantErr, err)
 				}
 			}
 
-			if strings.Compare(got, c.want) != 0 {
-				t.Errorf("want %q; got %q", c.want, got)
+			if strings.Compare(tt.want, got) != 0 {
+				t.Errorf("want %q; got %q", tt.want, got)
 			}
 		})
 	}
