@@ -3,64 +3,68 @@ package file
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"strings"
 )
 
-var (
-	ErrInvalidTriplet = errors.New("invalid triplet")
+const (
+	UserPath = "PATH"
 )
 
-// Exists return true if the filename is an executable and exists in the user PATH.
-func Exists(filename string) (bool, error) {
+var (
+	ErrInvalidTriplet  = errors.New("file: invalid triplet")
+	ErrInvalidFilename = errors.New("file: filename not found")
+)
+
+// IsExecutableInPath returns true if the filename is an executable and
+// exists in the user PATH.
+func IsExecutableInPath(filename string) (bool, error) {
 	found := false
-
-	path := os.Getenv("PATH")
+	path := os.Getenv(UserPath)
 	pathSlice := strings.Split(path, ":")
-
 	for _, dir := range pathSlice {
 		fullPath := dir + "/" + filename
 		fileInfo, err := os.Stat(fullPath)
-		if err == nil { // found!
+		if err == nil { // file found in user path
 			mode := fileInfo.Mode()
 			if mode.IsRegular() {
-				if mode&0111 != 0 {
+				if mode&0111 != 0 { // check executable bits
 					found = true
 				}
 			}
 		}
 	}
-
 	if !found {
-		return false, errors.New(fmt.Sprintf("%s not found", filename))
+		return false, ErrInvalidFilename
 	}
-
 	return found, nil
 }
 
-func Mode(filename string) (string, error) {
+// BinaryMode returns the file mode of filename in binary mode.
+func BinaryMode(filename string) (string, error) {
 	fileInfo, err := os.Stat(filename)
 	if err != nil {
-		return "", err
+		return "", ErrInvalidFilename
 	}
 	fileMode := fileInfo.Mode()
 	return convertToBinary(fileMode.String())
 }
 
+// convertToBinary returns the permissions given in binary form.
 func convertToBinary(permissions string) (string, error) {
-	binaryPermissions := permissions[1:]
+	if permissions == "" {
+		return "", ErrInvalidTriplet
+	}
 
+	binaryPermissions := permissions[1:]
 	p1, err := tripletToBinary(binaryPermissions[0:3])
 	if err != nil {
 		return "", err
 	}
-
 	p2, err := tripletToBinary(binaryPermissions[3:6])
 	if err != nil {
 		return "", err
 	}
-
 	p3, err := tripletToBinary(binaryPermissions[6:9])
 	if err != nil {
 		return "", err
@@ -68,6 +72,7 @@ func convertToBinary(permissions string) (string, error) {
 	return p1 + p2 + p3, nil
 }
 
+// tripletToBinary returns the single triplet in three digits binary value.
 func tripletToBinary(triplet string) (string, error) {
 	if triplet == "rwx" {
 		return "111", nil
