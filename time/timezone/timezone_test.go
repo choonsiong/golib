@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestNewTimezone(t *testing.T) {
+func TestNew(t *testing.T) {
 	logger := jsonlog.New(os.Stdout, jsonlog.LevelError)
 	tz := New(logger)
 
@@ -22,7 +22,7 @@ func TestNewTimezone(t *testing.T) {
 	}
 }
 
-func TestTimezone_TimezoneToString(t *testing.T) {
+func TestTimezoneToString(t *testing.T) {
 	logger := jsonlog.New(os.Stdout, jsonlog.LevelError)
 	tz := New(logger)
 
@@ -54,19 +54,19 @@ func TestTimezone_TimezoneToString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := tz.TimezoneToString(tt.code)
+			got, err := tz.TimezoneToString(tt.code)
 			if tt.wantError != nil {
 				if err == nil {
-					t.Errorf("want error: %q but got nil", tt.wantError)
+					t.Errorf("want error %q; got nil", tt.wantError)
 				}
 
 				if !errors.Is(err, tt.wantError) {
-					t.Errorf("want error: %q; got %q", tt.wantError, err)
+					t.Errorf("want error %q; got %q", tt.wantError, err)
 				}
 			}
 
-			if tt.want != result {
-				t.Errorf("want %q; got %q", tt.want, result)
+			if tt.want != got {
+				t.Errorf("Timezone.TimezoneToString(%q) == %q; want %q", tt.code, got, tt.want)
 			}
 		})
 	}

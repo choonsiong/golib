@@ -4,8 +4,8 @@ package time
 import "errors"
 
 var (
-	ErrInvalidHour     = errors.New("invalid hour")
-	ErrInvalidTimezone = errors.New("invalid timezone")
+	ErrInvalidHour     = errors.New("time: invalid hour")
+	ErrInvalidTimezone = errors.New("time: invalid timezone")
 )
 
 // NormalizeHourInTimezone returns the hour hr in the given timezone tz.
