@@ -14,7 +14,7 @@ func TestNew(t *testing.T) {
 	got := New(nil, LevelDebug)
 	want := &Logger{nil, LevelDebug, sync.Mutex{}}
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Logger.New() == %v, want %v", got, want)
+		t.Errorf("Logger.New() == %v; want %v", got, want)
 	}
 }
 
@@ -29,7 +29,7 @@ func TestLogger_PrintDebug(t *testing.T) {
 	got := buffer.String()
 
 	if strings.Compare(got, want) != 0 {
-		t.Errorf("Logger.PrintDebug() == %q, want %q", got, want)
+		t.Errorf("Logger.PrintDebug() == %q; want %q", got, want)
 	}
 }
 
@@ -44,7 +44,7 @@ func TestLogger_PrintInfo(t *testing.T) {
 	got := buffer.String()
 
 	if strings.Compare(got, want) != 0 {
-		t.Errorf("Logger.PrintInfo() == %q, want %q", got, want)
+		t.Errorf("Logger.PrintInfo() == %q; want %q", got, want)
 	}
 }
 
@@ -58,12 +58,12 @@ func TestLogger_PrintError(t *testing.T) {
 	want := "\"message\":\"test error\""
 
 	if !strings.Contains(got, want) {
-		t.Errorf("Logger.PrintError(), %q not found", want)
+		t.Errorf("Logger.PrintError(); %q not found", want)
 	}
 
 	want = "\"level\":\"ERROR\""
 	if !strings.Contains(got, want) {
-		t.Errorf("Logger.PrintError(), %q not found", want)
+		t.Errorf("Logger.PrintError(); %q not found", want)
 	}
 }
 
@@ -81,11 +81,11 @@ func TestLogger_Write(t *testing.T) {
 	want := "\"message\":\"test write\""
 
 	if !strings.Contains(got, want) {
-		t.Errorf("Logger.Write(), %q not found", want)
+		t.Errorf("Logger.Write(); %q not found", want)
 	}
 
 	want = "\"level\":\"ERROR\""
 	if !strings.Contains(got, want) {
-		t.Errorf("Logger.Write(), %q not found", want)
+		t.Errorf("Logger.Write(); %q not found", want)
 	}
 }

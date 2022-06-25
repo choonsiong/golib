@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// SMS stores various information needed for the SMS type.
+// SMS implements various information needed for the SMS type.
 type SMS struct {
 	Host       string   // sms server hostname or ip
 	Port       string   // sms server port number
@@ -19,7 +19,7 @@ type SMS struct {
 	UseHTTPS   bool     // use https?
 }
 
-// SendSMS sends sms text message.
+// SendSMS sends sms text message via the configured SMS gateway.
 func (s *SMS) SendSMS() error {
 	str := strings.Replace(s.Content, " ", "+", -1) // Replace whitespace with '+'
 
