@@ -32,7 +32,7 @@ func TestIsExecutableInPath(t *testing.T) {
 			}
 
 			if tt.want != got {
-				t.Errorf("IsExecutableInPath(%q) == %v; want %v", tt.filename, got, tt.want)
+				t.Errorf("IsExecutableInPath(%q) == %q; want %q", tt.filename, got, tt.want)
 			}
 		})
 	}
