@@ -76,6 +76,29 @@ func UnderscoreToLowerCamelCase(s string, t language.Tag) string {
 // CamelCaseToUnderscore returns camel case string s in underscore style.
 // For example: FooBar -> foo_bar
 func CamelCaseToUnderscore(s string) string {
+	if strings.Contains(s, "_") || strings.Contains(s, " ") {
+		return s
+	}
+	if len(s) > 1 {
+		var idx, count int
+		for i, r := range s {
+			if unicode.IsUpper(r) {
+				count++
+				if i == 0 {
+					idx = i
+					continue
+				} else {
+					if idx+1 == i {
+						// Two consecutive uppercase letter found,
+						// i.e. FOobar, fOObar
+						return s
+					} else {
+						idx = i
+					}
+				}
+			}
+		}
+	}
 	var output []rune
 	for i, r := range s {
 		if i == 0 {
