@@ -1,7 +1,10 @@
 // Package time implements various functions to work with time.
 package time
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 var (
 	ErrInvalidHour     = errors.New("time: invalid hour")
@@ -31,4 +34,18 @@ func NormalizeHourInTimezone(hr int, tz int) (int, error) {
 	}
 
 	return newHour, nil
+}
+
+// GetTimeNow returns the current local time.
+func GetTimeNow() time.Time {
+	return time.Now()
+}
+
+// GetCalculateTime returns new time with added duration to current time.
+func GetCalculateTime(currentTime time.Time, d string) (time.Time, error) {
+	duration, err := time.ParseDuration(d)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return currentTime.Add(duration), nil
 }
