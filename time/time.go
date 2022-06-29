@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	ErrInvalidDuration = errors.New("time: invalid duration")
 	ErrInvalidHour     = errors.New("time: invalid hour")
 	ErrInvalidTimezone = errors.New("time: invalid timezone")
 )
@@ -45,7 +46,7 @@ func GetTimeNow() time.Time {
 func GetCalculateTime(currentTime time.Time, d string) (time.Time, error) {
 	duration, err := time.ParseDuration(d)
 	if err != nil {
-		return time.Time{}, err
+		return time.Time{}, ErrInvalidDuration
 	}
 	return currentTime.Add(duration), nil
 }
