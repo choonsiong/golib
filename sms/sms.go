@@ -19,7 +19,7 @@ type SMS struct {
 	UseHTTPS   bool     // use https?
 }
 
-// SendSMS sends sms text message via the configured SMS gateway.
+// SendSMS sends sms text message via the configured SMS gateway.}
 func (s *SMS) SendSMS() error {
 	str := strings.Replace(s.Content, " ", "+", -1) // Replace whitespace with '+'
 
