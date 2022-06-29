@@ -51,10 +51,6 @@ func (s *SSL) Generate() error {
 		"CertPath": s.CertPath,
 		"KeyPath":  s.KeyPath,
 	})
-
-	//if _, err := file.Exists("openssl"); err != nil {
-	//	return errors.New(fmt.Sprintf("SSL.Generate(): %v", err))
-	//}
 	
 	if _, err := exec.LookPath("openssl"); err != nil {
 		return errors.New(fmt.Sprintf("SSL.Generate(): %v", err))
