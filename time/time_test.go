@@ -2,6 +2,7 @@ package time
 
 import (
 	"errors"
+	"strings"
 	"testing"
 	"time"
 )
@@ -49,6 +50,45 @@ func TestGetTimeNow(t *testing.T) {
 
 	if got != want {
 		t.Errorf("want %v; but got %v", want, got)
+	}
+}
+
+func TestGetTimeNowInLocation(t *testing.T) {
+	tests := []struct {
+		name     string
+		location string
+		want     time.Time
+		wantErr  error
+	}{
+		{"UTC", "UTC", time.Now().UTC(), nil},
+		{"Asia/Tokyo", "Asia/Tokyo", time.Now().UTC().Add(time.Hour * 9), nil},
+		{"Europe/London", "Europe/Helsinki", time.Now().UTC().Add(time.Hour * 3), nil},
+		{"US/Pacific", "US/Pacific", time.Now().UTC().Add(time.Hour * -7), nil},
+		{"Empty location", "UTC", time.Now().UTC(), nil},
+		{"Invalid location", "Asia/Foobar", time.Time{}, ErrInvalidLocation},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetTimeNowInLocation(tt.location)
+			gotStr := got.Format("2006-01-02 15:04:05")
+
+			if tt.wantErr != nil {
+				if err == nil {
+					t.Errorf("GetTimeNowInLocation(%q) == nil; want %v", tt.location, tt.wantErr)
+				}
+
+				if !errors.Is(err, tt.wantErr) {
+					t.Errorf("GetTimeNowInLocation(%q) == %v; want %v", tt.location, err, tt.wantErr)
+				}
+			}
+
+			wantStr := tt.want.Format("2006-01-02 15:04:05")
+
+			if strings.Compare(gotStr, wantStr) != 0 {
+				t.Errorf("GetTimeNowInLocation(%q) == %q, want %q", tt.location, gotStr, wantStr)
+			}
+		})
 	}
 }
 

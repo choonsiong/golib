@@ -9,6 +9,7 @@ import (
 var (
 	ErrInvalidDuration = errors.New("time: invalid duration")
 	ErrInvalidHour     = errors.New("time: invalid hour")
+	ErrInvalidLocation = errors.New("time: invalid location")
 	ErrInvalidTimezone = errors.New("time: invalid timezone")
 )
 
@@ -40,6 +41,26 @@ func NormalizeHourInTimezone(hr int, tz int) (int, error) {
 // GetTimeNow returns the current local time.
 func GetTimeNow() time.Time {
 	return time.Now()
+}
+
+// GetTimeNowInLocation returns the current time in location.
+func GetTimeNowInLocation(loc string) (time.Time, error) {
+	var location *time.Location
+	var err error
+
+	if loc == "" {
+		location, err = time.LoadLocation("UTC")
+		if err != nil {
+			return time.Time{}, ErrInvalidLocation
+		}
+	} else {
+		location, err = time.LoadLocation(loc)
+		if err != nil {
+			return time.Time{}, ErrInvalidLocation
+		}
+	}
+
+	return time.Now().In(location), nil
 }
 
 // GetCalculateTime returns new time with added duration to current time.
