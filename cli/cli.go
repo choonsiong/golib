@@ -7,15 +7,18 @@ import (
 
 var (
 	ErrInsufficientArguments = errors.New("cli: insufficient command-line arguments")
-	ErrInvalidArgument       = errors.New("cli: invalid command-line arguments")
+	ErrInvalidArguments      = errors.New("cli: invalid command-line arguments")
 )
 
-// Filename returns the filename from command-line arguments slice s,
-// s should be pass in as os.Args.
-func Filename(s []string) (string, error) {
-	if len(s) != 2 {
+// Filename returns the value of args in index 1 as the filename.
+// args should be pass in as os.Args.
+func Filename(args []string) (string, error) {
+	if len(args) < 2 {
 		return "", ErrInsufficientArguments
 	}
+	if len(args) != 2 {
+		return "", ErrInvalidArguments
+	}
 
-	return s[1], nil
+	return args[1], nil
 }
