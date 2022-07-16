@@ -5,6 +5,38 @@ import (
 	"testing"
 )
 
+func TestDistance(t *testing.T) {
+	tests := []struct {
+		name        string
+		coordinateA Coordinate2D
+		coordinateB Coordinate2D
+		want        float64
+	}{
+		{"horizontal line", Coordinate2D{0, 0}, Coordinate2D{10, 0}, 10},
+		{"vertical line", Coordinate2D{0, 0}, Coordinate2D{0, 10}, 10},
+		{"origin", Coordinate2D{0, 0}, Coordinate2D{0, 0}, 0},
+		{"random line", Coordinate2D{4, -2}, Coordinate2D{-5, 3}, math.Sqrt(106)},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Distance(tt.coordinateA, tt.coordinateB)
+			if got != tt.want {
+				t.Errorf("Distance(%v, %v) == %v; want %v", tt.coordinateA, tt.coordinateB, got, tt.want)
+			}
+		})
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.coordinateA.Distance(tt.coordinateB)
+			if got != tt.want {
+				t.Errorf("(%v).Distance(%v) == %v; want %v", tt.coordinateA, tt.coordinateB, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestSlope(t *testing.T) {
 	tests := []struct {
 		name        string
