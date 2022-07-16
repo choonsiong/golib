@@ -7,7 +7,6 @@ import (
 
 var (
 	ErrInsufficientArguments = errors.New("cli: insufficient command-line arguments")
-	ErrInvalidArguments      = errors.New("cli: invalid command-line arguments")
 	ErrInvalidFilename       = errors.New("cli: invalid filename")
 )
 
@@ -15,7 +14,7 @@ var (
 // args should be pass in as os.Args.
 func Filename(args []string) (string, error) {
 	if len(args) != 2 {
-		return "", ErrInvalidArguments
+		return "", ErrInsufficientArguments
 	}
 
 	if args[1] == "" {

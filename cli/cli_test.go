@@ -15,8 +15,8 @@ func TestFilename(t *testing.T) {
 	}{
 		{"with filename", []string{"command", "foo.txt"}, "foo.txt", nil},
 		{"empty filename", []string{"command", ""}, "", ErrInvalidFilename},
-		{"insufficient argument", []string{"command"}, "", ErrInvalidArguments},
-		{"too many arguments", []string{"command", "foo.txt", "bar.txt"}, "", ErrInvalidArguments},
+		{"insufficient argument", []string{"command"}, "", ErrInsufficientArguments},
+		{"too many arguments", []string{"command", "foo.txt", "bar.txt"}, "", ErrInsufficientArguments},
 	}
 
 	for _, tt := range tests {
