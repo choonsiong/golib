@@ -14,8 +14,8 @@ func TestFilename(t *testing.T) {
 		wantErr error
 	}{
 		{"with filename", []string{"command", "foo.txt"}, "foo.txt", nil},
-		{"empty filename", []string{"command", ""}, "", nil},
-		{"command only", []string{"command"}, "", ErrInsufficientArguments},
+		{"empty filename", []string{"command", ""}, "", ErrInvalidFilename},
+		{"insufficient argument", []string{"command"}, "", ErrInvalidArguments},
 		{"too many arguments", []string{"command", "foo.txt", "bar.txt"}, "", ErrInvalidArguments},
 	}
 
@@ -24,14 +24,14 @@ func TestFilename(t *testing.T) {
 			got, err := Filename(tt.args)
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("Filename(%v), want error %v; got nil", tt.wantErr)
+					t.Errorf("Filename(%v), want error %v; got nil", tt.args, tt.wantErr)
 				}
 				if !errors.Is(tt.wantErr, err) {
-					t.Errorf("Filename(%v), want error %v; got %v", tt.wantErr, err)
+					t.Errorf("Filename(%v), want error %v; got %v", tt.args, tt.wantErr, err)
 				}
 			}
 			if strings.Compare(got, tt.want) != 0 {
-				t.Errorf("Filename(%q) == %q; want %q", tt.args, got, tt.want)
+				t.Errorf("Filename(%v) == %q; want %q", tt.args, got, tt.want)
 			}
 		})
 	}
