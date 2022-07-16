@@ -63,7 +63,7 @@ func TestSlope(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.coordinateA.Slope(tt.coordinateB)
 			if got != tt.want {
-				t.Errorf("Coordinate2D.Slope(%v) == %v; want %v", tt.coordinateB, got, tt.want)
+				t.Errorf("(%v).Slope(%v) == %v; want %v", tt.coordinateA, tt.coordinateB, got, tt.want)
 			}
 		})
 	}
@@ -100,11 +100,11 @@ func TestMidpoint(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gotX, gotY := tt.coordinateA.Midpoint(tt.coordinateB)
 			if tt.midpointX != gotX {
-				t.Errorf("Coordinate2D.Midpoint(%v) == %v; want midpoint x %v", tt.coordinateB, gotX, tt.midpointX)
+				t.Errorf("(%v).Midpoint(%v) == %v; want midpoint x %v", tt.coordinateA, tt.coordinateB, gotX, tt.midpointX)
 			}
 
 			if tt.midpointY != gotY {
-				t.Errorf("Coordinate2D.Midpoint(%v) == %v; want midpoint y %v", tt.coordinateB, gotY, tt.midpointY)
+				t.Errorf("(%v).Midpoint(%v) == %v; want midpoint y %v", tt.coordinateA, tt.coordinateB, gotY, tt.midpointY)
 			}
 		})
 	}
@@ -135,7 +135,7 @@ func TestDistance3D(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.coordinateA.Distance(tt.coordinateB)
 			if tt.want != got {
-				t.Errorf("Coordinate3D.Distance(%v) == %v; want %v", tt.coordinateB, got, tt.want)
+				t.Errorf("(%v).Distance(%v) == %v; want %v", tt.coordinateA, tt.coordinateB, got, tt.want)
 			}
 		})
 	}
@@ -180,13 +180,13 @@ func TestMidpoint3D(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gotX, gotY, gotZ := tt.coordinateA.Midpoint(tt.coordinateB)
 			if tt.wantX != gotX {
-				t.Errorf("Coordinate3D.Midpoint(%v) == %v; want %v", tt.coordinateB, gotX, tt.wantX)
+				t.Errorf("(%v).Midpoint(%v) == %v; want %v", tt.coordinateA, tt.coordinateB, gotX, tt.wantX)
 			}
 			if tt.wantY != gotY {
-				t.Errorf("Coordinate3D.Midpoint(%v) == %v; want %v", tt.coordinateB, gotY, tt.wantY)
+				t.Errorf("(%v).Midpoint(%v) == %v; want %v", tt.coordinateA, tt.coordinateB, gotY, tt.wantY)
 			}
 			if tt.wantZ != gotZ {
-				t.Errorf("Coordinate3D.Midpoint(%v) == %v; want %v", tt.coordinateB, gotZ, tt.wantZ)
+				t.Errorf("(%v).Midpoint(%v) == %v; want %v", tt.coordinateA, tt.coordinateB, gotZ, tt.wantZ)
 			}
 		})
 	}
@@ -225,13 +225,13 @@ func TestEndPoint3D(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gotX, gotY, gotZ := tt.coordinateA.EndPointB(tt.midpoint)
 			if tt.wantX != gotX {
-				t.Errorf("Coordinate3D.EndPointB(%v) == %v; want %v", tt.midpoint, gotX, tt.wantX)
+				t.Errorf("(%v).EndPointB(%v) == %v; want %v", tt.coordinateA, tt.midpoint, gotX, tt.wantX)
 			}
 			if tt.wantY != gotY {
-				t.Errorf("Coordinate3D.EndPointB(%v) == %v; want %v", tt.midpoint, gotY, tt.wantY)
+				t.Errorf("(%v).EndPointB(%v) == %v; want %v", tt.coordinateA, tt.midpoint, gotY, tt.wantY)
 			}
 			if tt.wantZ != gotZ {
-				t.Errorf("Coordinate3D.EndPointB(%v) == %v; want %v", tt.midpoint, gotZ, tt.wantZ)
+				t.Errorf("(%v).EndPointB(%v) == %v; want %v", tt.coordinateA, tt.midpoint, gotZ, tt.wantZ)
 			}
 		})
 	}
