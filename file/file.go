@@ -12,12 +12,13 @@ const (
 )
 
 var (
+	ErrFileNotFound    = errors.New("file: file not found")
+	ErrInvalidFilename = errors.New("file: invalid filename")
 	ErrInvalidTriplet  = errors.New("file: invalid triplet")
-	ErrInvalidFilename = errors.New("file: filename not found")
 )
 
-// IsExecutableInPath returns true if the filename is an executable and
-// exists in the user PATH.
+// IsExecutableInPath returns true if filename is an executable and exists
+// in the user PATH.
 func IsExecutableInPath(filename string) (bool, error) {
 	found := false
 	path := os.Getenv(UserPath)
@@ -35,16 +36,16 @@ func IsExecutableInPath(filename string) (bool, error) {
 		}
 	}
 	if !found {
-		return false, ErrInvalidFilename
+		return false, ErrFileNotFound
 	}
 	return found, nil
 }
 
-// BinaryMode returns the file mode of filename in binary mode.
+// BinaryMode returns the file mode of filename in binary digits.
 func BinaryMode(filename string) (string, error) {
 	fileInfo, err := os.Stat(filename)
 	if err != nil {
-		return "", ErrInvalidFilename
+		return "", ErrFileNotFound
 	}
 	fileMode := fileInfo.Mode()
 	return convertToBinary(fileMode.String())
@@ -55,7 +56,6 @@ func convertToBinary(permissions string) (string, error) {
 	if permissions == "" {
 		return "", ErrInvalidTriplet
 	}
-
 	binaryPermissions := permissions[1:]
 	p1, err := tripletToBinary(binaryPermissions[0:3])
 	if err != nil {
@@ -72,7 +72,7 @@ func convertToBinary(permissions string) (string, error) {
 	return p1 + p2 + p3, nil
 }
 
-// tripletToBinary returns the single triplet in three digits binary value.
+// tripletToBinary returns the single triplet in three binary digits.
 func tripletToBinary(triplet string) (string, error) {
 	if triplet == "rwx" {
 		return "111", nil
