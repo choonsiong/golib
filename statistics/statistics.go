@@ -1,6 +1,8 @@
 package statistics
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	ErrEmptySlice = errors.New("statistics: slice is empty")

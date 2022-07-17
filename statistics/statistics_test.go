@@ -43,13 +43,16 @@ func TestDeviationFromMean(t *testing.T) {
 		numbers []float64
 		want    map[float64]float64
 	}{
-		{"one number", []float64{1.0}, map[float64]float64{1.0: 1.0}},
+		{"one number", []float64{1.0}, map[float64]float64{1.0: 0.0}},
+		{"many numbers", []float64{1.0, 2.0, 3.0, 4.0, 5.0}, map[float64]float64{1.0: -2.0, 2.0: -1.0, 3.0: 0.0, 4.0: 1.0, 5.0: 2.0}},
+		{"empty slice", []float64{}, nil},
+		{"negative numbers", []float64{-1.0, -2.0, -3.0, -4.0, -5.0}, map[float64]float64{-1.0: 2.0, -2.0: 1.0, -3.0: 0.0, -4.0: -1.0, -5.0: -2.0}},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := DeviationFromMean(tt.numbers...)
-			if isFloat64MapsSame(got, tt.want) {
+			if !isFloat64MapsSame(got, tt.want) {
 				t.Errorf("DeviationFromMean(%v) == %v; want %v", tt.numbers, got, tt.want)
 			}
 		})
