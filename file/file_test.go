@@ -14,8 +14,8 @@ func TestIsExecutableInPath(t *testing.T) {
 		wantErr  error
 	}{
 		{"go", "go", true, nil},
-		{"invalid filename", "abc", false, ErrInvalidFilename},
-		{"empty filename", "", false, ErrInvalidFilename},
+		{"invalid filename", "abc", false, ErrFileNotFound},
+		{"empty filename", "", false, ErrFileNotFound},
 	}
 
 	for _, tt := range tests {
@@ -53,7 +53,7 @@ func TestBinaryMode(t *testing.T) {
 		wantErr  error
 	}{
 		{"0644", testFile, "110100100", nil},
-		{"invalid filename", "foo.txt", "", ErrInvalidFilename},
+		{"invalid filename", "foo.txt", "", ErrFileNotFound},
 	}
 
 	for _, tt := range tests {

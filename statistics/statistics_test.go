@@ -2,6 +2,7 @@ package statistics
 
 import (
 	"errors"
+	"github.com/choonsiong/golib/compare"
 	"testing"
 )
 
@@ -52,23 +53,9 @@ func TestDeviationFromMean(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := DeviationFromMean(tt.numbers...)
-			if !isFloat64MapsSame(got, tt.want) {
+			if !compare.CompareFloat64Maps(got, tt.want) {
 				t.Errorf("DeviationFromMean(%v) == %v; want %v", tt.numbers, got, tt.want)
 			}
 		})
 	}
-}
-
-func isFloat64MapsSame(m1 map[float64]float64, m2 map[float64]float64) bool {
-	if len(m1) != len(m2) {
-		return false
-	}
-
-	for k, v := range m1 {
-		if m2[k] != v {
-			return false
-		}
-	}
-
-	return true
 }
