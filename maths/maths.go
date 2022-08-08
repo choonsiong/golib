@@ -1,3 +1,0 @@
-package maths
-
-func GCD()
