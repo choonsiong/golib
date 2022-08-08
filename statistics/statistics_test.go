@@ -53,7 +53,7 @@ func TestDeviationFromMean(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := DeviationFromMean(tt.numbers...)
-			if !compare.CompareFloat64Maps(got, tt.want) {
+			if !compare.Float64Maps(got, tt.want) {
 				t.Errorf("DeviationFromMean(%v) == %v; want %v", tt.numbers, got, tt.want)
 			}
 		})
