@@ -1,18 +1,8 @@
-// Package cli provides helpers to work with command-line.
+// Package cli provides helpers to work with command-line interface.
 package cli
 
-import (
-	"errors"
-)
-
-var (
-	ErrInsufficientArguments = errors.New("cli: insufficient command-line arguments")
-	ErrInvalidFilename       = errors.New("cli: invalid filename")
-	ErrTooManyArguments      = errors.New("cli: too many arguments")
-)
-
-// Filename returns the value of args in index 1 as the filename.
-// args should be pass in as os.Args.
+// Filename returns the value of args[1] as the required filename, os.Args
+// is required to pass in args.
 func Filename(args []string) (string, error) {
 	if len(args) > 2 {
 		return "", ErrTooManyArguments
@@ -23,7 +13,7 @@ func Filename(args []string) (string, error) {
 	}
 
 	if args[1] == "" {
-		return "", ErrInvalidFilename
+		return "", ErrEmptyFilename
 	}
 
 	return args[1], nil

@@ -13,9 +13,9 @@ func TestFilename(t *testing.T) {
 		want    string
 		wantErr error
 	}{
-		{"with filename", []string{"command", "foo.txt"}, "foo.txt", nil},
-		{"empty filename", []string{"command", ""}, "", ErrInvalidFilename},
-		{"insufficient argument", []string{"command"}, "", ErrInsufficientArguments},
+		{"valid filename", []string{"command", "foo.txt"}, "foo.txt", nil},
+		{"empty filename", []string{"command", ""}, "", ErrEmptyFilename},
+		{"insufficient arguments", []string{"command"}, "", ErrInsufficientArguments},
 		{"too many arguments", []string{"command", "foo.txt", "bar.txt"}, "", ErrTooManyArguments},
 	}
 
