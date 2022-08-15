@@ -57,6 +57,7 @@ func TestGetFloat(t *testing.T) {
 			if err != nil {
 				log.Fatal(err)
 			}
+
 			origStdin := os.Stdin
 			os.Stdin = r
 
