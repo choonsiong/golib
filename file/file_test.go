@@ -24,14 +24,14 @@ func TestIsExecutableInPath(t *testing.T) {
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %v; got nil", tt.wantErr)
+					t.Errorf("IsExecutableInPath(%v), want error %v; got nil", tt.filename, tt.wantErr)
 				}
-				if !errors.Is(tt.wantErr, err) {
-					t.Errorf("want error %v; got %v", tt.wantErr, err)
+				if !errors.Is(err, tt.wantErr) {
+					t.Errorf("IsExecutableInPath(%v), want error %v; got %v", tt.filename, tt.wantErr, err)
 				}
 			}
 
-			if tt.want != got {
+			if got != tt.want {
 				t.Errorf("IsExecutableInPath(%v) == %v; want %v", tt.filename, got, tt.want)
 			}
 		})
@@ -62,14 +62,14 @@ func TestBinaryMode(t *testing.T) {
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %v; got nil", tt.wantErr)
+					t.Errorf("BinaryMode(%v), want error %v; got nil", tt.filename, tt.wantErr)
 				}
-				if !errors.Is(tt.wantErr, err) {
-					t.Errorf("want error %v; got %v", tt.wantErr, err)
+				if !errors.Is(err, tt.wantErr) {
+					t.Errorf("BinaryMode(%v), want error %v; got %v", tt.filename, tt.wantErr, err)
 				}
 			}
 
-			if tt.want != got {
+			if got != tt.want {
 				t.Errorf("BinaryMode(%v) == %q; want %q", tt.filename, got, tt.want)
 			}
 		})
@@ -97,14 +97,14 @@ func Test_convertToBinary(t *testing.T) {
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %v; got nil", tt.wantErr)
+					t.Errorf("convertToBinary(%v), want error %v; got nil", tt.permissions, tt.wantErr)
 				}
-				if !errors.Is(tt.wantErr, err) {
-					t.Errorf("want error %v; got %v", tt.wantErr, err)
+				if !errors.Is(err, tt.wantErr) {
+					t.Errorf("convertToBinary(%v), want error %v; got %v", tt.permissions, tt.wantErr, err)
 				}
 			}
 
-			if tt.want != got {
+			if got != tt.want {
 				t.Errorf("convertToBinary(%v) == %q; want %q", tt.permissions, got, tt.want)
 			}
 		})
@@ -136,14 +136,14 @@ func Test_tripletToBinary(t *testing.T) {
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %v; got nil", tt.wantErr)
+					t.Errorf("tripletToBinary(%v), want error %v; got nil", tt.triplet, tt.wantErr)
 				}
-				if !errors.Is(tt.wantErr, err) {
-					t.Errorf("want error %v; got %v", tt.wantErr, err)
+				if !errors.Is(err, tt.wantErr) {
+					t.Errorf("tripletToBinary(%v), want error %v; got %v", tt.triplet, tt.wantErr, err)
 				}
 			}
 
-			if tt.want != got {
+			if got != tt.want {
 				t.Errorf("tripletToBinary(%v) == %q; want %q", tt.triplet, got, tt.want)
 			}
 		})

@@ -2,6 +2,7 @@
 package file
 
 import (
+	"fmt"
 	"os"
 	"strings"
 )
@@ -33,7 +34,7 @@ func IsExecutableInPath(filename string) (bool, error) {
 	}
 
 	if !found {
-		return false, ErrFileNotFound
+		return false, fmt.Errorf("%w: %q", ErrFileNotFound, filename)
 	}
 
 	return found, nil
@@ -44,7 +45,7 @@ func BinaryMode(filename string) (string, error) {
 	fileInfo, err := os.Stat(filename)
 
 	if err != nil {
-		return "", ErrFileNotFound
+		return "", fmt.Errorf("%w: %q", ErrFileNotFound, filename)
 	}
 
 	fileMode := fileInfo.Mode()
@@ -55,7 +56,7 @@ func BinaryMode(filename string) (string, error) {
 // convertToBinary returns the permissions given in binary form.
 func convertToBinary(permissions string) (string, error) {
 	if permissions == "" {
-		return "", ErrInvalidTriplet
+		return "", fmt.Errorf("%w: %q", ErrInvalidTriplet, permissions)
 	}
 
 	binaryPermissions := permissions[1:]
@@ -112,5 +113,5 @@ func tripletToBinary(triplet string) (string, error) {
 		return "010", nil
 	}
 
-	return "", ErrInvalidTriplet
+	return "", fmt.Errorf("%w: %q", ErrInvalidTriplet, triplet)
 }
