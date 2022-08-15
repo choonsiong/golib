@@ -2,19 +2,12 @@
 package file
 
 import (
-	"errors"
 	"os"
 	"strings"
 )
 
 const (
 	UserPath = "PATH"
-)
-
-var (
-	ErrFileNotFound    = errors.New("file: file not found")
-	ErrInvalidFilename = errors.New("file: invalid filename")
-	ErrInvalidTriplet  = errors.New("file: invalid triplet")
 )
 
 // IsExecutableInPath returns true if filename is an executable and exists
