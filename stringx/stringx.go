@@ -1,3 +1,4 @@
+// Package stringx provides extra functions to work with string.
 package stringx
 
 import (
