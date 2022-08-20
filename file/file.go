@@ -2,6 +2,7 @@
 package file
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -114,4 +115,33 @@ func tripletToBinary(triplet string) (string, error) {
 	}
 
 	return "", fmt.Errorf("%w: %q", ErrInvalidTriplet, triplet)
+}
+
+// GetStrings reads a string from each line of file.
+func GetStrings(filename string, ignoreCase bool) ([]string, error) {
+	var lines []string
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrOpenFile, err)
+	}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if ignoreCase {
+			line = strings.ToLower(line)
+		}
+
+		lines = append(lines, line)
+	}
+	err = file.Close()
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrCloseFile, err)
+	}
+
+	if scanner.Err() != nil {
+		return nil, fmt.Errorf("%w: %v", ErrScanFile, scanner.Err())
+	}
+
+	return lines, nil
 }
