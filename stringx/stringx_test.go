@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestToCamelCase(t *testing.T) {
+func TestCapitalizeEachWord(t *testing.T) {
 	tests := []struct {
 		name  string
 		input string
@@ -22,9 +22,9 @@ func TestToCamelCase(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := ToCamelCase(tt.input)
+			got := CapitalizeEachWord(tt.input)
 			if strings.Compare(got, tt.want) != 0 {
-				t.Errorf("ToCamelCase(%q) == %q; want %q", tt.input, got, tt.want)
+				t.Errorf("CapitalizeEachWord(%q) == %q; want %q", tt.input, got, tt.want)
 			}
 		})
 	}

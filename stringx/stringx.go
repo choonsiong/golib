@@ -5,7 +5,7 @@ import (
 )
 
 // ToCamelCase returns s with first character in upper case.
-func ToCamelCase(s string) string {
+func CapitalizeEachWord(s string) string {
 	if s == "" {
 		return ""
 	}
