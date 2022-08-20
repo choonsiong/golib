@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-// ToCamelCase returns s with first character in upper case.
+// CapitalizeEachWord returns s with first character in upper case.
 func CapitalizeEachWord(s string) string {
 	if s == "" {
 		return ""
