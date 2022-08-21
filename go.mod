@@ -2,4 +2,7 @@ module github.com/choonsiong/golib
 
 go 1.18
 
-require golang.org/x/text v0.3.7 // indirect
+require (
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
+	golang.org/x/text v0.3.7
+)
