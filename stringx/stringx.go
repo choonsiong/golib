@@ -18,7 +18,7 @@ func CapitalizeEachWord(s string) string {
 		bs := []byte(w)
 
 		// Ignore all non-English characters
-		if bs[0] > 127 {
+		if bs[0] < 97 || bs[0] > 122 {
 			return s
 		}
 

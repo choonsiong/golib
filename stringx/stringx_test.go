@@ -17,6 +17,11 @@ func TestCapitalizeEachWord(t *testing.T) {
 		{"empty", "", ""},
 		{"chinese characters", "你好吗", "你好吗"},
 		{"japanese characters", "ありがとうございました", "ありがとうございました"},
+		{"special character prefix", "/hello world", "/hello world"},
+		{"start with a", "a", "A"},
+		{"start with A", "A", "A"},
+		{"start with z", "z", "Z"},
+		{"start with Z", "Z", "Z"},
 	}
 
 	for _, tt := range tests {
