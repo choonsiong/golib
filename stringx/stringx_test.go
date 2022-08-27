@@ -33,3 +33,25 @@ func TestCapitalizeEachWord(t *testing.T) {
 		})
 	}
 }
+
+func TestRandomString(t *testing.T) {
+	tests := []struct {
+		name   string
+		length int
+		want   int
+	}{
+		{"length 0", 0, 0},
+		{"length 10", 10, 10},
+		{"length 20", 20, 20},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := RandomString(tt.length)
+			got := len(s)
+			if got != tt.want {
+				t.Errorf("RandomString(%d)'s length == %d, want %d", tt.length, got, tt.want)
+			}
+		})
+	}
+}

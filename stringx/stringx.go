@@ -2,20 +2,26 @@
 package stringx
 
 import (
+	"crypto/rand"
+	"log"
 	"strings"
 )
 
-// CapitalizeEachWord returns s with each word capitalized.
+// CapitalizeEachWord returns string s with each word capitalized.
 func CapitalizeEachWord(s string) string {
 	if s == "" {
 		return ""
 	}
 
-	ss := strings.Split(strings.ToLower(s), " ")
-	var str string
+	if len([]byte(s)) != len([]rune(s)) {
+		return s
+	}
 
-	for _, w := range ss {
-		bs := []byte(w)
+	ss := strings.Split(strings.ToLower(s), " ")
+	var result string
+
+	for _, ch := range ss {
+		bs := []byte(ch)
 
 		// Ignore all non-English characters
 		if bs[0] < 97 || bs[0] > 122 {
@@ -23,9 +29,28 @@ func CapitalizeEachWord(s string) string {
 		}
 
 		bs[0] -= 32
-		str += string(bs)
-		str += " "
+		result += string(bs)
+		result += " "
 	}
 
-	return strings.TrimSpace(str)
+	return strings.TrimSpace(result)
+}
+
+const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_+"
+
+// RandomString returns a string of random characters of length,
+// using randomStringSource as the source for the string.
+func RandomString(length int) string {
+	s, r := make([]rune, length), []rune(randomStringSource)
+	for i := range s { // i is index
+		p, err := rand.Prime(rand.Reader, len(r))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		x, y := p.Uint64(), uint64(len(r))
+		s[i] = r[x%y]
+	}
+
+	return string(s)
 }
