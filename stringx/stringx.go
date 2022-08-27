@@ -3,7 +3,7 @@ package stringx
 
 import (
 	"crypto/rand"
-	"log"
+	"fmt"
 	"strings"
 )
 
@@ -40,17 +40,21 @@ const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 
 // RandomString returns a string of random characters of length,
 // using randomStringSource as the source for the string.
-func RandomString(length int) string {
+func RandomString(length int) (string, error) {
+	if length < 0 {
+		return "", fmt.Errorf("%w: %v", ErrInvalidInput, length)
+	}
+
 	s, r := make([]rune, length), []rune(randomStringSource)
 	for i := range s { // i is index
 		p, err := rand.Prime(rand.Reader, len(r))
 		if err != nil {
-			log.Fatal(err)
+			return "", fmt.Errorf("%w: %v", ErrGenerateRandomString, err)
 		}
 
 		x, y := p.Uint64(), uint64(len(r))
 		s[i] = r[x%y]
 	}
 
-	return string(s)
+	return string(s), nil
 }
