@@ -1,0 +1,3 @@
+# golib
+
+Personal go library.
