@@ -1,4 +1,4 @@
-// Package stringx provides extra functions to work with string.
+// Package stringx provides extra helpers to work with string.
 package stringx
 
 import (
@@ -36,10 +36,15 @@ func CapitalizeEachWord(s string) string {
 	return strings.TrimSpace(result)
 }
 
+// RandomPassword returns a random password for the given length.
+func RandomPassword(length int) (string, error) {
+	return RandomString(length)
+}
+
 const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_+"
 
-// RandomString returns a string of random characters of length,
-// using randomStringSource as the source for the string.
+// RandomString returns a string of random characters of length, using
+// randomStringSource as the source for the string.
 func RandomString(length int) (string, error) {
 	if length < 0 {
 		return "", fmt.Errorf("%w: %v", ErrInvalidInput, length)

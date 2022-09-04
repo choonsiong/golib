@@ -35,6 +35,39 @@ func TestCapitalizeEachWord(t *testing.T) {
 	}
 }
 
+func TestRandomPassword(t *testing.T) {
+	tests := []struct {
+		name    string
+		length  int
+		want    int
+		wantErr error
+	}{
+		{"length -1", -1, 0, ErrInvalidInput},
+		{"length 0", 0, 0, nil},
+		{"length 10", 10, 10, nil},
+		{"length 20", 20, 20, nil},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s, err := RandomPassword(tt.length)
+			if tt.wantErr != nil {
+				if err == nil {
+					t.Errorf("RandomPassword(%v), want error %v; got nil", tt.length, tt.wantErr)
+				}
+				if !errors.Is(err, tt.wantErr) {
+					t.Errorf("RandomPassword(%v), want error %v; got %v", tt.length, tt.wantErr, err)
+				}
+			}
+
+			got := len(s)
+			if got != tt.want {
+				t.Errorf("RandomPassword(%d)'s length == %d; want %d", tt.length, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestRandomString(t *testing.T) {
 	tests := []struct {
 		name    string
