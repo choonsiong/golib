@@ -63,3 +63,9 @@ func RandomString(length int) (string, error) {
 
 	return string(s), nil
 }
+
+// RandomStringIgnoreError is a convenient method for RandomString.
+func RandomStringIgnoreError(length int) string {
+	s, _ := RandomString(length)
+	return s
+}
