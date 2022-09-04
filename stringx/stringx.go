@@ -51,7 +51,7 @@ func RandomString(length int) (string, error) {
 	}
 
 	s, r := make([]rune, length), []rune(randomStringSource)
-	for i := range s { // i is index
+	for i := range s {
 		p, err := rand.Prime(rand.Reader, len(r))
 		if err != nil {
 			return "", fmt.Errorf("%w: %v", ErrGenerateRandomString, err)
