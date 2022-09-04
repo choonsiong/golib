@@ -2,6 +2,7 @@ package file
 
 import (
 	"errors"
+	"github.com/choonsiong/golib/stringx"
 	"os"
 	"testing"
 )
@@ -76,75 +77,72 @@ func TestBinaryMode(t *testing.T) {
 	}
 }
 
-func Test_convertToBinary(t *testing.T) {
+func TestGetStrings(t *testing.T) {
+	var lines string
+
+	for i := 0; i < 10; i++ {
+		line, err := stringx.RandomString(10)
+		if err != nil {
+			t.Fatal("failed to generate random string")
+		}
+		line += "\n"
+		lines += line
+	}
+
+	testFile := "/tmp/test"
+
+	f, err := os.Create(testFile) // 0644 (after apply user mask)
+	if err != nil {
+		t.Fatal("failed to create test file:", testFile)
+	}
+
+	f.Write([]byte(lines))
+	err = f.Close()
+	if err != nil {
+		t.Fatal("failed to close test file")
+	}
+
+	emptyFile := "/tmp/empty"
+
+	f2, err := os.Create(emptyFile)
+	if err != nil {
+		t.Fatal("failed to create empty file:", emptyFile)
+	}
+	err = f2.Close()
+	if err != nil {
+		t.Fatal("failed to close test file")
+	}
+
 	tests := []struct {
-		name        string
-		permissions string
-		want        string
-		wantErr     error
+		name       string
+		filename   string
+		ignoreCase bool
+		want       int // the length of string slice
+		wantErr    error
 	}{
-		{"-rwxrwxrwx", "-rwxrwxrwx", "111111111", nil},
-		{"-abcrwxrwx", "-abcrwxrwx", "", ErrInvalidTriplet},
-		{"-rwxabcrwx", "-rwxabcrwx", "", ErrInvalidTriplet},
-		{"-rwxrwxabc", "-rwxrwxabc", "", ErrInvalidTriplet},
-		{"empty", "", "", ErrInvalidTriplet},
-		{"all invalid", "aaaaaaaaaa", "", ErrInvalidTriplet},
+		{"valid filename", "/tmp/test", false, 10, nil},
+		{"valid filename and ignore case", "/tmp/test", true, 10, nil},
+		{"invalid filename", "/tmp/invalid", true, 0, ErrOpenFile},
+		{"empty file", "/tmp/empty", true, 0, nil},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := convertToBinary(tt.permissions)
+			gotSlice, err := GetStrings(tt.filename, tt.ignoreCase)
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("convertToBinary(%v), want error %v; got nil", tt.permissions, tt.wantErr)
+					t.Errorf("GetStrings(%v), want error %v; got nil", tt.filename, tt.wantErr)
 				}
 				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("convertToBinary(%v), want error %v; got %v", tt.permissions, tt.wantErr, err)
+					t.Errorf("GetStrings(%v), want error %v; got %v", tt.filename, tt.wantErr, err)
 				}
 			}
+
+			got := len(gotSlice)
 
 			if got != tt.want {
-				t.Errorf("convertToBinary(%v) == %q; want %q", tt.permissions, got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_tripletToBinary(t *testing.T) {
-	tests := []struct {
-		name    string
-		triplet string
-		want    string
-		wantErr error
-	}{
-		{"rwx", "rwx", "111", nil},
-		{"-wx", "-wx", "011", nil},
-		{"--x", "--x", "001", nil},
-		{"---", "---", "000", nil},
-		{"r-x", "r-x", "101", nil},
-		{"r--", "r--", "100", nil},
-		{"rw-", "rw-", "110", nil},
-		{"-w-", "-w-", "010", nil},
-		{"empty", "", "", ErrInvalidTriplet},
-		{"invalid triplet", "abc", "", ErrInvalidTriplet},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tripletToBinary(tt.triplet)
-
-			if tt.wantErr != nil {
-				if err == nil {
-					t.Errorf("tripletToBinary(%v), want error %v; got nil", tt.triplet, tt.wantErr)
-				}
-				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("tripletToBinary(%v), want error %v; got %v", tt.triplet, tt.wantErr, err)
-				}
-			}
-
-			if got != tt.want {
-				t.Errorf("tripletToBinary(%v) == %q; want %q", tt.triplet, got, tt.want)
+				t.Errorf("GetStrings(%v) == %v; want %v", tt.filename, got, tt.want)
 			}
 		})
 	}
