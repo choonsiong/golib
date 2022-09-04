@@ -97,6 +97,8 @@ var (
 	MaxUploadFileSize int
 )
 
+// UploadFiles uploads one or more files to the specified directory with
+// random file names. If rename is true, then original file names are use.
 func UploadFiles(r *http.Request, uploadDir string, rename ...bool) ([]*UploadedFile, error) {
 	renameFile := true
 	if len(rename) > 0 {
