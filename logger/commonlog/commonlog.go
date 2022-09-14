@@ -1,8 +1,7 @@
-// Package jsonlog implements json format logging.
-package jsonlog
+// Package commonlog implements common logging.
+package commonlog
 
 import (
-	"encoding/json"
 	"github.com/choonsiong/golib/logger"
 	"io"
 	"os"
@@ -11,47 +10,47 @@ import (
 	"time"
 )
 
-// JSONLog is custom logger type. It holds the output destination that the log
+// CommonLog is custom logger type. It holds the output destination that the log
 // entries will be written to, the minimum severity level that log entries will
 // be written for, plus a mutex for coordinating the writes.
-type JSONLog struct {
+type CommonLog struct {
 	out      io.Writer
 	minLevel logger.Level
 	mu       sync.Mutex
 }
 
-// New returns a new JSONLog instance which writes log entries at or above a
+// New returns a new CommonLog instance which writes log entries at or above a
 // minimum severity level to a specific output destination.
-func New(out io.Writer, minLevel logger.Level) *JSONLog {
-	return &JSONLog{
+func New(out io.Writer, minLevel logger.Level) *CommonLog {
+	return &CommonLog{
 		out:      out,
 		minLevel: minLevel,
 	}
 }
 
 // PrintDebug is a helper method to write DEBUG level log entries.
-func (l *JSONLog) PrintDebug(message string, properties map[string]string) {
+func (l *CommonLog) PrintDebug(message string, properties map[string]string) {
 	l.print(logger.LevelDebug, message, properties)
 }
 
 // PrintInfo is a helper method to write INFO level log entries.
-func (l *JSONLog) PrintInfo(message string, properties map[string]string) {
+func (l *CommonLog) PrintInfo(message string, properties map[string]string) {
 	l.print(logger.LevelInfo, message, properties)
 }
 
 // PrintError is a helper method to write ERROR level log entries.
-func (l *JSONLog) PrintError(err error, properties map[string]string) {
+func (l *CommonLog) PrintError(err error, properties map[string]string) {
 	l.print(logger.LevelError, err.Error(), properties)
 }
 
 // PrintFatal is a helper method to write FATAL level log entries.
-func (l *JSONLog) PrintFatal(err error, properties map[string]string) {
+func (l *CommonLog) PrintFatal(err error, properties map[string]string) {
 	l.print(logger.LevelFatal, err.Error(), properties)
 	os.Exit(1) // terminate application also
 }
 
 // Print is a private method for writing the log entry.
-func (l *JSONLog) print(level logger.Level, message string, properties map[string]string) (int, error) {
+func (l *CommonLog) print(level logger.Level, message string, properties map[string]string) (int, error) {
 	if level < l.minLevel {
 		return 0, nil
 	}
@@ -72,18 +71,28 @@ func (l *JSONLog) print(level logger.Level, message string, properties map[strin
 
 	if level >= logger.LevelError {
 		aux.Trace = string(debug.Stack())
-		// Print it to console (it is a bit difficult to read the trace in
-		// JSON format :p
-		//log.Println(string(debug.Stack()))
 	}
 
 	// To hold the actual log entry text.
-	var line []byte
-
-	line, err := json.Marshal(aux)
-	if err != nil {
-		line = []byte(logger.LevelError.String() + ": unable to marshal log messages: " + err.Error())
+	var line string
+	line += aux.Time
+	line += " "
+	line += aux.Level
+	line += " "
+	line += aux.Message
+	if len(aux.Properties) != 0 {
+		line += "\n"
+		for k, v := range aux.Properties {
+			line += k
+			line += ":"
+			line += v
+		}
 	}
+	if aux.Trace != "" {
+		line += "\n"
+		line += aux.Trace
+	}
+	line += "\n"
 
 	// Lock the mutex so that no two writes to the output destination can
 	// happen concurrently.
@@ -91,11 +100,11 @@ func (l *JSONLog) print(level logger.Level, message string, properties map[strin
 	defer l.mu.Unlock()
 
 	// Write the log entry (JSON encoded) followed by a newline.
-	return l.out.Write(append(line, '\n'))
+	return l.out.Write([]byte(line))
 }
 
 // Write writes a log entry at the ERROR level with no additional properties.
 // It is implemented to satisfy the io.Writer interface.
-func (l *JSONLog) Write(message []byte) (n int, err error) {
+func (l *CommonLog) Write(message []byte) (n int, err error) {
 	return l.print(logger.LevelError, string(message), nil)
 }

@@ -1,4 +1,4 @@
-package jsonlog
+package logger
 
 import (
 	"errors"
@@ -21,12 +21,12 @@ func TestLevel_String(t *testing.T) {
 		{"unknown", Level(42), "UNKNOWN LEVEL"},
 	}
 
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			got := c.level.String()
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.level.String()
 
-			if strings.Compare(got, c.want) != 0 {
-				t.Errorf("Level.String() == %q; want %q", got, c.want)
+			if strings.Compare(got, tt.want) != 0 {
+				t.Errorf("Level.String() == %q; want %q", got, tt.want)
 			}
 		})
 	}
@@ -48,21 +48,21 @@ func TestLogLevel(t *testing.T) {
 		{"unknown", "unknown", LevelInvalid, ErrUnknownLogLevel},
 	}
 
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			got, err := LogLevel(c.level)
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := LogLevel(tt.level)
 
-			if c.wantErr != nil {
+			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("LogLevel(%q) == nil; want %q", c.level, c.wantErr)
+					t.Errorf("LogLevel(%q) == nil; want %q", tt.level, tt.wantErr)
 				}
-				if !errors.Is(err, c.wantErr) {
-					t.Errorf("LogLevel(%q) == %q; want %q", c.level, err, c.wantErr)
+				if !errors.Is(err, tt.wantErr) {
+					t.Errorf("LogLevel(%q) == %q; want %q", tt.level, err, tt.wantErr)
 				}
 			}
 
-			if got != c.want {
-				t.Errorf("LogLevel(%q) == %q; want %q", c.level, got, c.want)
+			if got != tt.want {
+				t.Errorf("LogLevel(%q) == %q; want %q", tt.level, got, tt.want)
 			}
 		})
 	}

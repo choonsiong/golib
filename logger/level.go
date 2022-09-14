@@ -1,7 +1,6 @@
-package jsonlog
+package logger
 
 import (
-	"errors"
 	"strings"
 )
 
@@ -17,11 +16,7 @@ const (
 	LevelInvalid = -1
 )
 
-var (
-	ErrUnknownLogLevel = errors.New("unknown log level")
-)
-
-// String returns a human-friendly string for the severity level.
+// String returns a descriptive string for the severity level.
 func (l Level) String() string {
 	switch l {
 	case LevelDebug:
@@ -41,7 +36,7 @@ func (l Level) String() string {
 	}
 }
 
-// LogLevel matches the level string to a Level type.
+// LogLevel matches the level string to a Level value.
 func LogLevel(level string) (Level, error) {
 	switch strings.ToLower(level) {
 	case "debug":

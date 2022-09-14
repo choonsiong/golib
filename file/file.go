@@ -3,13 +3,8 @@ package file
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
-	"github.com/choonsiong/golib/stringx"
-	"io"
-	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -90,99 +85,4 @@ func GetStrings(filename string, ignoreCase bool) ([]string, error) {
 	}
 
 	return lines, nil
-}
-
-var (
-	AllowedFileTypes  []string
-	MaxUploadFileSize int
-)
-
-// UploadFiles uploads one or more files to the specified directory with
-// random file names. If rename is true, then original file names are use.
-func UploadFiles(r *http.Request, uploadDir string, rename ...bool) ([]*UploadedFile, error) {
-	renameFile := true
-	if len(rename) > 0 {
-		renameFile = rename[0]
-	}
-
-	var uploadedFiles []*UploadedFile
-
-	if MaxUploadFileSize == 0 {
-		MaxUploadFileSize = 1024 * 1024 * 1024
-	}
-
-	err := r.ParseMultipartForm(int64(MaxUploadFileSize))
-	if err != nil {
-		return nil, errors.New("upload file size too big")
-	}
-
-	for _, fileHeaders := range r.MultipartForm.File {
-		for _, fh := range fileHeaders {
-			uploadedFiles, err = func(uploadedFiles []*UploadedFile) ([]*UploadedFile, error) {
-				var uploadedFile UploadedFile
-
-				f, err := fh.Open()
-				if err != nil {
-					return nil, err
-				}
-				defer f.Close()
-
-				buff := make([]byte, 512)
-				_, err = f.Read(buff)
-				if err != nil {
-					return nil, err
-				}
-
-				allowed := false
-				fileType := http.DetectContentType(buff)
-
-				if len(AllowedFileTypes) > 0 {
-					for _, allowedFileType := range AllowedFileTypes {
-						if strings.EqualFold(fileType, allowedFileType) {
-							allowed = true
-						}
-					}
-				} else {
-					allowed = true
-				}
-
-				if !allowed {
-					return nil, errors.New("upload file type is not supported")
-				}
-
-				_, err = f.Seek(0, 0)
-				if err != nil {
-					return nil, err
-				}
-
-				if renameFile {
-					uploadedFile.NewFileName = fmt.Sprintf("%s%s", stringx.RandomStringIgnoreError(25), filepath.Ext(fh.Filename))
-				} else {
-					uploadedFile.NewFileName = fh.Filename
-				}
-
-				uploadedFile.OriginalFileName = fh.Filename
-
-				var outputFile *os.File
-				defer outputFile.Close()
-
-				if outputFile, err = os.Create(filepath.Join(uploadDir, uploadedFile.NewFileName)); err != nil {
-					return nil, err
-				} else {
-					fileSize, err := io.Copy(outputFile, f)
-					if err != nil {
-						return nil, err
-					}
-					uploadedFile.FileSize = fileSize
-				}
-
-				uploadedFiles = append(uploadedFiles, &uploadedFile)
-				return uploadedFiles, nil
-			}(uploadedFiles)
-			if err != nil {
-				return uploadedFiles, err
-			}
-		}
-	}
-	return uploadedFiles, nil
 }
