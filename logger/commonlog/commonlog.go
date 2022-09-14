@@ -84,7 +84,7 @@ func (l *CommonLog) print(level logger.Level, message string, properties map[str
 		for k, v := range aux.Properties {
 			line += "\n\t"
 			line += k
-			line += ":"
+			line += ": "
 			line += v
 		}
 	}
