@@ -26,7 +26,7 @@ func TestCommonLog_PrintDebug(t *testing.T) {
 	logger.PrintDebug("test debug", map[string]string{"key": "value"})
 
 	now := time.Now().UTC().Format(time.RFC3339)
-	want := now + ` DEBUG test debug` + "\n" + `key:value` + "\n"
+	want := now + ` DEBUG test debug` + "\n\t" + `key:value` + "\n"
 	got := buffer.String()
 
 	if strings.Compare(got, want) != 0 {
@@ -41,7 +41,7 @@ func TestCommonLog_PrintInfo(t *testing.T) {
 	logger.PrintInfo("test info", map[string]string{"key": "value"})
 
 	now := time.Now().UTC().Format(time.RFC3339)
-	want := now + ` INFO test info` + "\n" + `key:value` + "\n"
+	want := now + ` INFO test info` + "\n\t" + `key:value` + "\n"
 	got := buffer.String()
 
 	if strings.Compare(got, want) != 0 {
