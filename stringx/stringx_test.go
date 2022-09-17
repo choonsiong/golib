@@ -125,3 +125,35 @@ func TestRandomStringIgnoreError(t *testing.T) {
 		})
 	}
 }
+
+func TestSlugify(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		want    string
+		wantErr error
+	}{
+		{"valid string", "now is the time", "now-is-the-time", nil},
+		{"empty string", "", "", ErrEmptyString},
+		{"complex string", "h@llo#$%%^WORLD", "h-llo-world", nil},
+		{"non-english string", "ありがとうございました", "", ErrEmptySlug},
+		{"mixed string", "helloありがとうございましたworld", "hello-world", nil},
+	}
+
+	for _, tt := range tests {
+		got, err := Slugify(tt.input)
+
+		if tt.wantErr != nil {
+			if err == nil {
+				t.Errorf("Slugify(%v), want error %v; got nil", tt.input, tt.wantErr)
+			}
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("Slugify(%v), want error %v; got %v", tt.input, tt.wantErr, err)
+			}
+		}
+
+		if got != tt.want {
+			t.Errorf("Slugify(%q) == %q; want %q", tt.input, got, tt.want)
+		}
+	}
+}

@@ -4,6 +4,7 @@ package stringx
 import (
 	"crypto/rand"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -68,4 +69,23 @@ func RandomString(length int) (string, error) {
 func RandomStringIgnoreError(length int) string {
 	s, _ := RandomString(length)
 	return s
+}
+
+// Slugify returns a string with all non-english letters and non-digits with
+// '-', for example, 'hello world' -> 'hello-world'.
+func Slugify(s string) (string, error) {
+	if s == "" {
+		return "", ErrEmptyString
+	}
+
+	// Match all non-english and non-digits characters
+	var re = regexp.MustCompile(`[^a-z\d]+`)
+
+	slug := strings.Trim(re.ReplaceAllString(strings.ToLower(s), "-"), "-")
+
+	if len(slug) == 0 {
+		return "", ErrEmptySlug
+	}
+
+	return slug, nil
 }

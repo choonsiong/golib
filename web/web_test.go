@@ -5,7 +5,6 @@ import (
 	"image"
 	"image/png"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http/httptest"
 	"os"
@@ -33,13 +32,7 @@ func TestUploadFiles(t *testing.T) {
 		wg.Add(1)
 
 		go func() {
-			defer func(writer *multipart.Writer) {
-				err := writer.Close()
-				if err != nil {
-					log.Fatal(err)
-				}
-			}(writer)
-
+			defer writer.Close()
 			defer wg.Done()
 
 			part, err := writer.CreateFormFile("file", "./testdata/image.png")
@@ -52,12 +45,7 @@ func TestUploadFiles(t *testing.T) {
 				t.Error(err)
 			}
 
-			defer func(file *os.File) {
-				err := file.Close()
-				if err != nil {
-					log.Fatal(err)
-				}
-			}(file)
+			defer file.Close()
 
 			img, _, err := image.Decode(file)
 			if err != nil {
@@ -115,12 +103,7 @@ func TestUploadFile(t *testing.T) {
 		wg.Add(1)
 
 		go func() {
-			defer func(writer *multipart.Writer) {
-				err := writer.Close()
-				if err != nil {
-					log.Fatal(err)
-				}
-			}(writer)
+			defer writer.Close()
 			defer wg.Done()
 
 			part, err := writer.CreateFormFile("file", "./testdata/image2.png")
@@ -133,12 +116,7 @@ func TestUploadFile(t *testing.T) {
 				t.Error(err)
 			}
 
-			defer func(file *os.File) {
-				err := file.Close()
-				if err != nil {
-					log.Fatal(err)
-				}
-			}(file)
+			defer file.Close()
 
 			img, _, err := image.Decode(file)
 			if err != nil {
