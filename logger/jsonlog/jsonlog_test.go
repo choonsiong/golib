@@ -21,9 +21,9 @@ func TestNew(t *testing.T) {
 
 func TestJSONLog_PrintDebug(t *testing.T) {
 	buffer := new(bytes.Buffer)
-	logger := New(buffer, logger.LevelDebug)
+	l := New(buffer, logger.LevelDebug)
 
-	logger.PrintDebug("test debug", nil)
+	l.PrintDebug("test debug", nil)
 
 	now := time.Now().UTC().Format(time.RFC3339)
 	want := `{"level":"DEBUG","time":"` + now + `","message":"test debug"}` + "\n"
@@ -36,9 +36,9 @@ func TestJSONLog_PrintDebug(t *testing.T) {
 
 func TestJSONLog_PrintInfo(t *testing.T) {
 	buffer := new(bytes.Buffer)
-	logger := New(buffer, logger.LevelInfo)
+	l := New(buffer, logger.LevelInfo)
 
-	logger.PrintInfo("test info", nil)
+	l.PrintInfo("test info", nil)
 
 	now := time.Now().UTC().Format(time.RFC3339)
 	want := `{"level":"INFO","time":"` + now + `","message":"test info"}` + "\n"
@@ -51,20 +51,20 @@ func TestJSONLog_PrintInfo(t *testing.T) {
 
 func TestJSONLog_PrintError(t *testing.T) {
 	buffer := new(bytes.Buffer)
-	logger := New(buffer, logger.LevelError)
+	l := New(buffer, logger.LevelError)
 
-	logger.PrintError(errors.New("test error"), nil)
+	l.PrintError(errors.New("test error"), nil)
 
 	got := buffer.String()
 	want := "\"message\":\"test error\""
 
 	if !strings.Contains(got, want) {
-		t.Errorf("JSONLog.PrintError(); %q not found", want)
+		t.Errorf("JSONLog.PrintError() == %q; want %q", got, want)
 	}
 
 	want = "\"level\":\"ERROR\""
 	if !strings.Contains(got, want) {
-		t.Errorf("JSONLog.PrintError(); %q not found", want)
+		t.Errorf("JSONLog.PrintError() == %q; want %q", got, want)
 	}
 }
 
@@ -74,19 +74,38 @@ func TestJSONLog_PrintFatal(t *testing.T) {
 
 func TestJSONLog_Write(t *testing.T) {
 	buffer := new(bytes.Buffer)
-	logger := New(buffer, logger.LevelError)
+	l := New(buffer, logger.LevelError)
 
-	logger.Write([]byte("test write"))
+	_, err := l.Write([]byte("test write"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	got := buffer.String()
 	want := "\"message\":\"test write\""
 
 	if !strings.Contains(got, want) {
-		t.Errorf("JSONLog.Write(); %q not found", want)
+		t.Errorf("JSONLog.Write() == %q; want %q", got, want)
 	}
 
 	want = "\"level\":\"ERROR\""
 	if !strings.Contains(got, want) {
-		t.Errorf("JSONLog.Write(); %q not found", want)
+		t.Errorf("JSONLog.Write() == %q; want %q", got, want)
+	}
+}
+
+func TestJSONLog_print(t *testing.T) {
+	buffer := new(bytes.Buffer)
+	l := New(buffer, logger.LevelDebug)
+	l.minLevel = 1
+	want := 0
+
+	got, err := l.print(-1, "", nil)
+	if err != nil {
+		t.Errorf("JSONLog.print() == %v; want nil", err)
+	}
+
+	if got != want {
+		t.Errorf("JSONLog.print(%v, %v, %v) == %d; want %d", -1, "", "", got, want)
 	}
 }
