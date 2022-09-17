@@ -1,13 +1,5 @@
 package statistics
 
-import (
-	"errors"
-)
-
-var (
-	ErrEmptySlice = errors.New("statistics: slice is empty")
-)
-
 // Average returns the mean of numbers.
 func Average(numbers ...float64) (float64, error) {
 	if len(numbers) == 0 {
