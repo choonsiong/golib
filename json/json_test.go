@@ -116,6 +116,9 @@ func TestReadJSON_Decode(t *testing.T) {
 }
 
 func TestWriteJSON(t *testing.T) {
+	h := http.Header{}
+	h["testing"] = []string{"header testing"}
+
 	tests := []struct {
 		name    string
 		status  int
@@ -128,7 +131,7 @@ func TestWriteJSON(t *testing.T) {
 			name:    "valid struct",
 			status:  http.StatusOK,
 			data:    &Person{"foobar", 42, "foobar@example.com"},
-			headers: http.Header{},
+			headers: nil,
 			want:    "{\n\t\"name\": \"foobar\",\n\t\"age\": 42,\n\t\"email\": \"foobar@example.com\"\n}",
 			wantErr: nil,
 		},
@@ -139,7 +142,7 @@ func TestWriteJSON(t *testing.T) {
 				Name: "foobar",
 				Age:  42,
 			},
-			headers: http.Header{},
+			headers: nil,
 			want:    "{\n\t\"name\": \"foobar\",\n\t\"age\": 42,\n\t\"email\": \"\"\n}",
 			wantErr: nil,
 		},
@@ -147,7 +150,15 @@ func TestWriteJSON(t *testing.T) {
 			name:    "nil data",
 			status:  http.StatusOK,
 			data:    nil,
-			headers: http.Header{},
+			headers: nil,
+			want:    "null",
+			wantErr: nil,
+		},
+		{
+			name:    "with header",
+			status:  http.StatusOK,
+			data:    nil,
+			headers: h,
 			want:    "null",
 			wantErr: nil,
 		},
@@ -183,7 +194,12 @@ func TestWriteJSON(t *testing.T) {
 				t.Errorf("want HTTP Content-Type %v; got %v", "application/json", got.Header.Get("Content-Type"))
 			}
 
-			defer got.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+					t.Fatal(err)
+				}
+			}(got.Body)
 
 			body, err := io.ReadAll(got.Body)
 			if err != nil {
