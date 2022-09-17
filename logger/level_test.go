@@ -6,7 +6,7 @@ import (
 )
 
 func TestLevel_String(t *testing.T) {
-	cases := []struct {
+	tests := []struct {
 		name  string
 		level Level
 		want  string
@@ -18,7 +18,7 @@ func TestLevel_String(t *testing.T) {
 		{"unknown", Level(42), "UNKNOWN"},
 	}
 
-	for _, tt := range cases {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.level.String()
 
@@ -30,7 +30,7 @@ func TestLevel_String(t *testing.T) {
 }
 
 func TestLogLevel(t *testing.T) {
-	cases := []struct {
+	tests := []struct {
 		name  string
 		level string
 		want  Level
@@ -42,7 +42,7 @@ func TestLogLevel(t *testing.T) {
 		{"unknown", "unknown", LevelUnknown},
 	}
 
-	for _, tt := range cases {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := LogLevel(tt.level)
 
