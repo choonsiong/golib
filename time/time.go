@@ -2,6 +2,7 @@
 package time
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -12,11 +13,11 @@ import (
 // UTC 20:00 in -22 = NormalizeHourInTimezone(20, -22) => 22:00
 func NormalizeHourInTimezone(hr int, tz int) (int, error) {
 	if hr < 0 || hr > 24 {
-		return -1, ErrInvalidHour
+		return -1, fmt.Errorf("NormalizeHourInTimezone(%d, %d): %w", hr, tz, ErrInvalidHour)
 	}
 
 	if tz < -24 || tz > 24 {
-		return -1, ErrInvalidTimezone
+		return -1, fmt.Errorf("NormalizeHourInTimezone(%d, %d): %w", hr, tz, ErrInvalidTimezone)
 	}
 
 	newHour := hr + tz
@@ -41,7 +42,7 @@ func GetTimeNowInLocation(loc string) (time.Time, error) {
 	var err error
 
 	if loc == "" {
-		return time.Time{}, ErrInvalidLocation
+		return time.Time{}, fmt.Errorf("GetTimeNowInLocation(%q): %w", loc, ErrInvalidLocation)
 		//location, err = time.LoadLocation("UTC")
 		//if err != nil {
 		//	return time.Time{}, ErrInvalidLocation
@@ -49,7 +50,7 @@ func GetTimeNowInLocation(loc string) (time.Time, error) {
 	} else {
 		location, err = time.LoadLocation(loc)
 		if err != nil {
-			return time.Time{}, ErrInvalidLocation
+			return time.Time{}, fmt.Errorf("GetTimeNowInLocation(%q): %w", loc, ErrInvalidLocation)
 		}
 	}
 
@@ -60,7 +61,7 @@ func GetTimeNowInLocation(loc string) (time.Time, error) {
 func GetCalculateTime(currentTime time.Time, d string) (time.Time, error) {
 	duration, err := time.ParseDuration(d)
 	if err != nil {
-		return time.Time{}, ErrInvalidDuration
+		return time.Time{}, fmt.Errorf("GetCalculateTime(%v, %v): %w", currentTime, d, ErrInvalidDuration)
 	}
 	return currentTime.Add(duration), nil
 }
