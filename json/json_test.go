@@ -116,6 +116,9 @@ func TestReadJSON_Decode(t *testing.T) {
 }
 
 func TestWriteJSON(t *testing.T) {
+	h := http.Header{}
+	h["testing"] = []string{"testing"}
+
 	tests := []struct {
 		name    string
 		status  int
@@ -151,6 +154,14 @@ func TestWriteJSON(t *testing.T) {
 			want:    "null",
 			wantErr: nil,
 		},
+		{
+			name:    "want header",
+			status:  http.StatusOK,
+			data:    nil,
+			headers: h,
+			want:    "null",
+			wantErr: nil,
+		},
 	}
 
 	for _, tt := range tests {
@@ -183,7 +194,12 @@ func TestWriteJSON(t *testing.T) {
 				t.Errorf("want HTTP Content-Type %v; got %v", "application/json", got.Header.Get("Content-Type"))
 			}
 
-			defer got.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+					t.Fatal(err)
+				}
+			}(got.Body)
 
 			body, err := io.ReadAll(got.Body)
 			if err != nil {
