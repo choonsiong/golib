@@ -1,22 +1,7 @@
-// Package timezone provides helpers to work with time zone.
+// Package timezone provides helpers to work with timezone.
 package timezone
 
-import (
-	"errors"
-	"github.com/choonsiong/golib/logger/jsonlog"
-)
-
-type Timezone struct {
-	Logger    *jsonlog.Logger
-	Timezones map[string]string
-}
-
-var (
-	ErrTimezoneIsEmpty    = errors.New("timezone: timezone is empty")
-	ErrNoMatchingTimezone = errors.New("timezone: no matching timezone found")
-)
-
-var timezone = map[string]string{
+var timezones = map[string]string{
 	"Australia/ACT":                    "ACT",
 	"Africa/Abidjan":                   "Abidjan",
 	"Africa/Accra":                     "Accra",
@@ -566,33 +551,18 @@ var timezone = map[string]string{
 	"UTC+14":                           "UTC+14",
 }
 
-// New returns a new pointer to Timezone.
-func New(logger *jsonlog.Logger) *Timezone {
-	return &Timezone{
-		Logger:    logger,
-		Timezones: timezone,
-	}
-}
-
-// TimezoneToString returns the normalized tz.
-func (t *Timezone) TimezoneToString(tz string) (string, error) {
-	t.Logger.PrintDebug("Timezone.TimezoneToString()", map[string]string{
-		"tz": tz,
-	})
-
+// DescriptiveName returns the descriptive timezone, or empty if the timezone
+// does not exist.
+func DescriptiveName(tz string) string {
 	if tz == "" {
-		return "", ErrTimezoneIsEmpty
+		return ""
 	}
 
-	if _, ok := t.Timezones[tz]; !ok {
-		return "", ErrNoMatchingTimezone
+	if _, ok := timezones[tz]; !ok {
+		return ""
 	}
 
-	v := t.Timezones[tz]
+	v := timezones[tz]
 
-	t.Logger.PrintDebug("Timezone.TimezoneToString()", map[string]string{
-		"timezone": v,
-	})
-
-	return v, nil
+	return v
 }

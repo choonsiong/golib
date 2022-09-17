@@ -1,72 +1,38 @@
 package timezone
 
 import (
-	"errors"
-	"github.com/choonsiong/golib/logger/jsonlog"
-	"os"
-	"reflect"
 	"testing"
 )
 
-func TestNew(t *testing.T) {
-	logger := jsonlog.New(os.Stdout, jsonlog.LevelError)
-	tz := New(logger)
-
-	want := &Timezone{
-		Logger:    logger,
-		Timezones: tz.Timezones,
-	}
-
-	if !reflect.DeepEqual(want, tz) {
-		t.Errorf("want %v; got %v", want, tz)
-	}
-}
-
-func TestTimezoneToString(t *testing.T) {
-	logger := jsonlog.New(os.Stdout, jsonlog.LevelError)
-	tz := New(logger)
-
+func TestDescriptiveName(t *testing.T) {
 	tests := []struct {
-		name      string
-		code      string
-		want      string
-		wantError error
+		name string
+		code string
+		want string
 	}{
 		{
-			name:      "valid timezone",
-			code:      "Asia/Tokyo",
-			want:      "Tokyo",
-			wantError: nil,
+			name: "valid timezone",
+			code: "Asia/Tokyo",
+			want: "Tokyo",
 		},
 		{
-			name:      "invalid timezone",
-			code:      "Asia/Petaling_Jaya",
-			want:      "",
-			wantError: ErrNoMatchingTimezone,
+			name: "invalid timezone",
+			code: "Asia/Petaling_Jaya",
+			want: "",
 		},
 		{
-			name:      "empty timezone",
-			code:      "",
-			want:      "",
-			wantError: ErrTimezoneIsEmpty,
+			name: "empty timezone",
+			code: "",
+			want: "",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tz.TimezoneToString(tt.code)
-			if tt.wantError != nil {
-				if err == nil {
-					t.Errorf("want error %q; got nil", tt.wantError)
-				}
-
-				if !errors.Is(err, tt.wantError) {
-					t.Errorf("want error %q; got %q", tt.wantError, err)
-				}
-			}
+			got := DescriptiveName(tt.code)
 
 			if tt.want != got {
-				t.Errorf("Timezone.TimezoneToString(%q) == %q; want %q", tt.code, got, tt.want)
+				t.Errorf("DescriptiveName(%q) == %q; want %q", tt.code, got, tt.want)
 			}
 		})
 	}
