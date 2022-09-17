@@ -1,22 +1,9 @@
 package ssl
 
 import (
-	"github.com/choonsiong/golib/logger/jsonlog"
 	"os"
-	"reflect"
 	"testing"
 )
-
-func TestNew(t *testing.T) {
-	logger := &jsonlog.Logger{}
-	want := &SSL{
-		Logger: logger,
-	}
-	got := New(logger)
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want %v; got %v", got, want)
-	}
-}
 
 func TestSSL_Generate(t *testing.T) {
 	ssl := SSL{
@@ -30,7 +17,6 @@ func TestSSL_Generate(t *testing.T) {
 		Organization: "Foo Bar",
 		CommonName:   "com.example",
 		Days:         "30",
-		Logger:       jsonlog.New(os.Stdout, jsonlog.LevelError),
 	}
 
 	err := ssl.Generate()

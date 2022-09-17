@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/choonsiong/golib/logger/jsonlog"
 	"os"
 	"os/exec"
 )
@@ -21,14 +20,6 @@ type SSL struct {
 	Organization string
 	CommonName   string
 	Days         string
-	Logger       *jsonlog.Logger
-}
-
-// New returns a new SSL.
-func New(logger *jsonlog.Logger) *SSL {
-	return &SSL{
-		Logger: logger,
-	}
 }
 
 // Generate generates the SSL/TLS certificate and private key.
@@ -47,11 +38,6 @@ func (s *SSL) Generate() error {
 		}
 	}
 
-	s.Logger.PrintDebug("SSL.Generate()", map[string]string{
-		"CertPath": s.CertPath,
-		"KeyPath":  s.KeyPath,
-	})
-	
 	if _, err := exec.LookPath("openssl"); err != nil {
 		return errors.New(fmt.Sprintf("SSL.Generate(): %v", err))
 	}
