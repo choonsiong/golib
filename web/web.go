@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/choonsiong/golib/stringx"
 	"io"
+	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -51,7 +53,12 @@ func UploadFiles(r *http.Request, uploadDir string, rename ...bool) ([]*Uploaded
 				if err != nil {
 					return nil, err
 				}
-				defer f.Close()
+				defer func(f multipart.File) {
+					err := f.Close()
+					if err != nil {
+						log.Fatal(err)
+					}
+				}(f)
 
 				buff := make([]byte, 512)
 				_, err = f.Read(buff)
@@ -90,7 +97,12 @@ func UploadFiles(r *http.Request, uploadDir string, rename ...bool) ([]*Uploaded
 				uploadedFile.OriginalFileName = fh.Filename
 
 				var outputFile *os.File
-				defer outputFile.Close()
+				defer func(outputFile *os.File) {
+					err := outputFile.Close()
+					if err != nil {
+						log.Fatal(err)
+					}
+				}(outputFile)
 
 				if outputFile, err = os.Create(filepath.Join(uploadDir, uploadedFile.NewFileName)); err != nil {
 					return nil, err
@@ -111,4 +123,20 @@ func UploadFiles(r *http.Request, uploadDir string, rename ...bool) ([]*Uploaded
 		}
 	}
 	return uploadedFiles, nil
+}
+
+// UploadFile uploads one file to the specified directory with random file
+// name. If rename is true, then original file name is use.
+func UploadFile(r *http.Request, uploadDir string, rename ...bool) (*UploadedFile, error) {
+	renameFile := true
+	if len(rename) > 0 {
+		renameFile = rename[0]
+	}
+
+	files, err := UploadFiles(r, uploadDir, renameFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return files[0], nil
 }
