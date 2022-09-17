@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"errors"
 	"strings"
 	"testing"
 )
@@ -16,9 +15,7 @@ func TestLevel_String(t *testing.T) {
 		{"info", LevelInfo, "INFO"},
 		{"error", LevelError, "ERROR"},
 		{"fatal", LevelFatal, "FATAL"},
-		{"off", LevelOff, "OFF"},
-		{"invalid", LevelInvalid, "INVALID"},
-		{"unknown", Level(42), "UNKNOWN LEVEL"},
+		{"unknown", Level(42), "UNKNOWN"},
 	}
 
 	for _, tt := range cases {
@@ -34,32 +31,20 @@ func TestLevel_String(t *testing.T) {
 
 func TestLogLevel(t *testing.T) {
 	cases := []struct {
-		name    string
-		level   string
-		want    Level
-		wantErr error
+		name  string
+		level string
+		want  Level
 	}{
-		{"debug", "debug", LevelDebug, nil},
-		{"info", "info", LevelInfo, nil},
-		{"error", "error", LevelError, nil},
-		{"fatal", "fatal", LevelFatal, nil},
-		{"off", "off", LevelOff, nil},
-		{"invalid", "invalid", LevelInvalid, nil},
-		{"unknown", "unknown", LevelInvalid, ErrUnknownLogLevel},
+		{"debug", "debug", LevelDebug},
+		{"info", "info", LevelInfo},
+		{"error", "error", LevelError},
+		{"fatal", "fatal", LevelFatal},
+		{"unknown", "unknown", LevelUnknown},
 	}
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := LogLevel(tt.level)
-
-			if tt.wantErr != nil {
-				if err == nil {
-					t.Errorf("LogLevel(%q) == nil; want %q", tt.level, tt.wantErr)
-				}
-				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("LogLevel(%q) == %q; want %q", tt.level, err, tt.wantErr)
-				}
-			}
+			got := LogLevel(tt.level)
 
 			if got != tt.want {
 				t.Errorf("LogLevel(%q) == %q; want %q", tt.level, got, tt.want)

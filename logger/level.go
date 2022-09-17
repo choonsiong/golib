@@ -12,8 +12,7 @@ const (
 	LevelInfo                 // 1
 	LevelError                // 2
 	LevelFatal                // 3
-	LevelOff     = 99
-	LevelInvalid = -1
+	LevelUnknown = -1
 )
 
 // String returns a descriptive string for the severity level.
@@ -27,31 +26,23 @@ func (l Level) String() string {
 		return "ERROR"
 	case LevelFatal:
 		return "FATAL"
-	case LevelOff:
-		return "OFF"
-	case LevelInvalid:
-		return "INVALID"
 	default:
-		return "UNKNOWN LEVEL"
+		return "UNKNOWN"
 	}
 }
 
 // LogLevel matches the level string to a Level value.
-func LogLevel(level string) (Level, error) {
+func LogLevel(level string) Level {
 	switch strings.ToLower(level) {
 	case "debug":
-		return LevelDebug, nil
+		return LevelDebug
 	case "info":
-		return LevelInfo, nil
+		return LevelInfo
 	case "error":
-		return LevelError, nil
+		return LevelError
 	case "fatal":
-		return LevelFatal, nil
-	case "off":
-		return LevelOff, nil
-	case "invalid":
-		return LevelInvalid, nil
+		return LevelFatal
 	default:
-		return LevelInvalid, ErrUnknownLogLevel
+		return LevelUnknown
 	}
 }
