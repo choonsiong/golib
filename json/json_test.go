@@ -117,7 +117,7 @@ func TestReadJSON_Decode(t *testing.T) {
 
 func TestWriteJSON(t *testing.T) {
 	h := http.Header{}
-	h["testing"] = []string{"testing"}
+	h["testing"] = []string{"header testing"}
 
 	tests := []struct {
 		name    string
@@ -131,7 +131,7 @@ func TestWriteJSON(t *testing.T) {
 			name:    "valid struct",
 			status:  http.StatusOK,
 			data:    &Person{"foobar", 42, "foobar@example.com"},
-			headers: http.Header{},
+			headers: nil,
 			want:    "{\n\t\"name\": \"foobar\",\n\t\"age\": 42,\n\t\"email\": \"foobar@example.com\"\n}",
 			wantErr: nil,
 		},
@@ -142,7 +142,7 @@ func TestWriteJSON(t *testing.T) {
 				Name: "foobar",
 				Age:  42,
 			},
-			headers: http.Header{},
+			headers: nil,
 			want:    "{\n\t\"name\": \"foobar\",\n\t\"age\": 42,\n\t\"email\": \"\"\n}",
 			wantErr: nil,
 		},
@@ -150,12 +150,12 @@ func TestWriteJSON(t *testing.T) {
 			name:    "nil data",
 			status:  http.StatusOK,
 			data:    nil,
-			headers: http.Header{},
+			headers: nil,
 			want:    "null",
 			wantErr: nil,
 		},
 		{
-			name:    "want header",
+			name:    "with header",
 			status:  http.StatusOK,
 			data:    nil,
 			headers: h,
