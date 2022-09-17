@@ -1,16 +1,8 @@
-// Package time implements various functions to work with time.
+// Package time provides helpers to work with time.
 package time
 
 import (
-	"errors"
 	"time"
-)
-
-var (
-	ErrInvalidDuration = errors.New("time: invalid duration")
-	ErrInvalidHour     = errors.New("time: invalid hour")
-	ErrInvalidLocation = errors.New("time: invalid location")
-	ErrInvalidTimezone = errors.New("time: invalid timezone")
 )
 
 // NormalizeHourInTimezone returns the hour hr in the given timezone tz.
@@ -49,10 +41,11 @@ func GetTimeNowInLocation(loc string) (time.Time, error) {
 	var err error
 
 	if loc == "" {
-		location, err = time.LoadLocation("UTC")
-		if err != nil {
-			return time.Time{}, ErrInvalidLocation
-		}
+		return time.Time{}, ErrInvalidLocation
+		//location, err = time.LoadLocation("UTC")
+		//if err != nil {
+		//	return time.Time{}, ErrInvalidLocation
+		//}
 	} else {
 		location, err = time.LoadLocation(loc)
 		if err != nil {

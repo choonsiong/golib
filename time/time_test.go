@@ -29,16 +29,16 @@ func TestNormalizeHourInTimezone(t *testing.T) {
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("NormalizeHourInTimezone(%q, %q) == nil; want %q", tt.hr, tt.tz, tt.wantErr)
+					t.Errorf("NormalizeHourInTimezone(%v, %v) == nil; want %v", tt.hr, tt.tz, tt.wantErr)
 				}
 
 				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("NormalizeHourInTimezone(%q, %q) == %q; want %q", tt.hr, tt.tz, err, tt.wantErr)
+					t.Errorf("NormalizeHourInTimezone(%v, %v) == %v; want %v", tt.hr, tt.tz, err, tt.wantErr)
 				}
 			}
 
 			if got != tt.want {
-				t.Errorf("NormalizeHourInTimezone(%q, %q) == %q, want %q", tt.hr, tt.tz, got, tt.want)
+				t.Errorf("NormalizeHourInTimezone(%v, %v) == %v, want %v", tt.hr, tt.tz, got, tt.want)
 			}
 		})
 	}
@@ -64,7 +64,7 @@ func TestGetTimeNowInLocation(t *testing.T) {
 		{"Asia/Tokyo", "Asia/Tokyo", time.Now().UTC().Add(time.Hour * 9), nil},
 		{"Europe/London", "Europe/Helsinki", time.Now().UTC().Add(time.Hour * 3), nil},
 		{"US/Pacific", "US/Pacific", time.Now().UTC().Add(time.Hour * -7), nil},
-		{"Empty location", "UTC", time.Now().UTC(), nil},
+		{"Empty location", "", time.Time{}, nil},
 		{"Invalid location", "Asia/Foobar", time.Time{}, ErrInvalidLocation},
 	}
 
@@ -112,16 +112,16 @@ func TestGetCalculateTime(t *testing.T) {
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("GetCalculateTime(%q, %q) == nil; want %q", tt.currentTime, tt.duration, tt.wantErr)
+					t.Errorf("GetCalculateTime(%v, %v) == nil; want %v", tt.currentTime, tt.duration, tt.wantErr)
 				}
 
 				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("GetCalculateTime(%q, %q) == %q; want %q", tt.currentTime, tt.duration, err, tt.wantErr)
+					t.Errorf("GetCalculateTime(%v, %v) == %v; want %v", tt.currentTime, tt.duration, err, tt.wantErr)
 				}
 			}
 
 			if got != tt.want {
-				t.Errorf("GetCalculateTime(%q, %q) == %q, want %q", tt.currentTime, tt.duration, got, tt.want)
+				t.Errorf("GetCalculateTime(%v, %v) == %v, want %v", tt.currentTime, tt.duration, got, tt.want)
 			}
 		})
 	}
