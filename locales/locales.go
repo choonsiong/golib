@@ -1,21 +1,12 @@
-// Package locales provides helpers to work with different locales.
+// Package locales provides helpers to work with locales.
 package locales
 
 import (
-	"errors"
-	"github.com/choonsiong/golib/logger/jsonlog"
+	"fmt"
 )
 
-type Locale struct {
-	Logger *jsonlog.Logger
-}
-
-var (
-	ErrEmptyInput       = errors.New("locales: input is empty")
-	ErrNoMatchingLocale = errors.New("locales: no matching locale found")
-)
-
-var locale = map[string]string{
+// codes maps the code to long descriptive name.
+var codes = map[string]string{
 	"af":         "Afrikaans",
 	"af_NA":      "Afrikaans (Namibia)",
 	"af_ZA":      "Afrikaans (South Africa)",
@@ -584,34 +575,15 @@ var locale = map[string]string{
 	"zu_ZA":      "Zulu (South Africa)",
 }
 
-// New returns a new pointer to type Locale.
-func New(logger *jsonlog.Logger) *Locale {
-	if logger == nil {
-		return nil
-	}
-
-	return &Locale{
-		Logger: logger,
-	}
-}
-
-// LocaleToString returns the long version locale.
-func (l *Locale) LocaleToString(code string) (string, error) {
-	l.Logger.PrintDebug("Locale.LocaleToString()", map[string]string{
-		"code": code,
-	})
-
+// DescriptiveName returns the long descriptive version of the code.
+func DescriptiveName(code string) (string, error) {
 	if code == "" {
-		return "", ErrEmptyInput
+		return "", fmt.Errorf("DescriptiveName(%q): %w", code, ErrEmptyInput)
 	}
 
-	if v, ok := locale[code]; ok {
-		l.Logger.PrintDebug("Locale.LocaleToString()", map[string]string{
-			"v": v,
-		})
-
+	if v, ok := codes[code]; ok {
 		return v, nil
 	}
 
-	return "", ErrNoMatchingLocale
+	return "", fmt.Errorf("DescriptiveName(%q): %w", code, ErrNoMatchingLocale)
 }
