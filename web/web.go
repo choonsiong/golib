@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/choonsiong/golib/stringx"
 	"io"
-	"log"
-	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -53,12 +51,7 @@ func UploadFiles(r *http.Request, uploadDir string, rename ...bool) ([]*Uploaded
 				if err != nil {
 					return nil, err
 				}
-				defer func(f multipart.File) {
-					err := f.Close()
-					if err != nil {
-						log.Fatal(err)
-					}
-				}(f)
+				defer f.Close()
 
 				buff := make([]byte, 512)
 				_, err = f.Read(buff)
@@ -97,12 +90,7 @@ func UploadFiles(r *http.Request, uploadDir string, rename ...bool) ([]*Uploaded
 				uploadedFile.OriginalFileName = fh.Filename
 
 				var outputFile *os.File
-				defer func(outputFile *os.File) {
-					err := outputFile.Close()
-					if err != nil {
-						log.Fatal(err)
-					}
-				}(outputFile)
+				defer outputFile.Close()
 
 				if outputFile, err = os.Create(filepath.Join(uploadDir, uploadedFile.NewFileName)); err != nil {
 					return nil, err
