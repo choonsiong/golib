@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -127,4 +128,13 @@ func UploadFile(r *http.Request, uploadDir string, rename ...bool) (*UploadedFil
 	}
 
 	return files[0], nil
+}
+
+// DownloadStaticFile downloads a file, and force the browser to avoid
+// displaying it in the browser window by setting content disposition.
+// It also allows specification of the display name.
+func DownloadStaticFile(w http.ResponseWriter, r *http.Request, filePath, fileName, newFileName string) {
+	fp := path.Join(filePath, fileName)
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", newFileName))
+	http.ServeFile(w, r, fp)
 }

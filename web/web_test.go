@@ -6,6 +6,7 @@ import (
 	"image/png"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"sync"
@@ -148,5 +149,28 @@ func TestUploadFile(t *testing.T) {
 		}
 
 		wg.Wait()
+	}
+}
+
+func TestDownloadStaticFile(t *testing.T) {
+	resp := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/", nil)
+
+	DownloadStaticFile(resp, req, "./testdata", "pic.jpg", "image.jpg")
+
+	data := resp.Result()
+	defer data.Body.Close()
+
+	if data.Header["Content-Length"][0] != "98827" { // 98827 bytes
+		t.Errorf("DownloadStaticFile(): want %v; got %v", "98827", data.Header["Content-Length"][0])
+	}
+
+	if data.Header["Content-Disposition"][0] != "attachment; filename=\"image.jpg\"" {
+		t.Errorf("DownloadStaticFile(): want %v; got %v", "image.jpg", data.Header["Content-Disposition"][0])
+	}
+
+	_, err := io.ReadAll(data.Body)
+	if err != nil {
+		t.Fatal(err)
 	}
 }
