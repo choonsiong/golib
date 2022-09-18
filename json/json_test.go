@@ -3,9 +3,12 @@ package json
 import (
 	"bytes"
 	"errors"
+	"github.com/choonsiong/golib/logger"
+	"github.com/choonsiong/golib/logger/commonlog"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
@@ -19,6 +22,7 @@ type Person struct {
 
 func TestJSON_ReadJSON(t *testing.T) {
 	j := &JSON{}
+	j.Logger = commonlog.New(os.Stdout, logger.LevelError)
 
 	tests := []struct {
 		name               string
@@ -124,15 +128,15 @@ func TestJSON_ReadJSON(t *testing.T) {
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %v; got nil", tt.wantErr)
+					t.Errorf("JSON.ReadJSON(): want error %v; got nil", tt.wantErr)
 				}
 				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("want error %v; got %v", tt.wantErr, err)
+					t.Errorf("JSON.ReadJSON(): want error %v; got %v", tt.wantErr, err)
 				}
 			}
 
 			if !reflect.DeepEqual(p, tt.want) {
-				t.Errorf("want %v; got %v", tt.want, p)
+				t.Errorf("JSON.ReadJSON(): want %v; got %v", tt.want, p)
 			}
 
 			p = nil
@@ -142,6 +146,8 @@ func TestJSON_ReadJSON(t *testing.T) {
 
 func TestJSON_ReadJSONDecode(t *testing.T) {
 	j := &JSON{}
+	j.Logger = commonlog.New(os.Stdout, logger.LevelError)
+
 	w := httptest.NewRecorder()
 
 	tests := []struct {
@@ -171,24 +177,27 @@ func TestJSON_ReadJSONDecode(t *testing.T) {
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %v; got nil", tt.wantErr)
+					t.Errorf("JSON.ReadJSON(): want error %v; got nil", tt.wantErr)
 				}
 				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("want error %v; got %v", tt.wantErr, err)
+					t.Errorf("JSON.ReadJSON(): want error %v; got %v", tt.wantErr, err)
 				}
 			}
 		})
 	}
 }
 
-func TestWriteJSON(t *testing.T) {
+func TestJSON_WriteJSON(t *testing.T) {
+	j := &JSON{}
+	j.Logger = commonlog.New(os.Stdout, logger.LevelError)
+
 	h := http.Header{}
 	h["testing"] = []string{"header testing"}
 
 	tests := []struct {
 		name    string
 		status  int
-		data    *Person
+		data    any
 		headers http.Header
 		want    string
 		wantErr error
@@ -199,6 +208,14 @@ func TestWriteJSON(t *testing.T) {
 			data:    &Person{"foobar", 42, "foobar@example.com"},
 			headers: nil,
 			want:    "{\n\t\"name\": \"foobar\",\n\t\"age\": 42,\n\t\"email\": \"foobar@example.com\"\n}",
+			wantErr: nil,
+		},
+		{
+			name:    "integer data",
+			status:  http.StatusOK,
+			data:    1,
+			headers: nil,
+			want:    "1",
 			wantErr: nil,
 		},
 		{
@@ -239,25 +256,25 @@ func TestWriteJSON(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			err = WriteJSON(w, tt.status, tt.data, tt.headers)
+			err = j.WriteJSON(w, tt.status, tt.data, tt.headers)
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %q; got nil", tt.wantErr)
+					t.Errorf("JSON.WriteJSON(): want error %v; got nil", tt.wantErr)
 				}
 				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("want error %q; got %q", tt.wantErr, err)
+					t.Errorf("JSON.WriteJSON(): want error %v; got %v", tt.wantErr, err)
 				}
 			}
 
 			got := w.Result()
 
 			if got.StatusCode != http.StatusOK {
-				t.Errorf("want HTTP status code %v; got %v", http.StatusOK, got.StatusCode)
+				t.Errorf("JSON.WriteJSON(): want HTTP status code %v; got %v", http.StatusOK, got.StatusCode)
 			}
 
 			if got.Header.Get("Content-Type") != "application/json" {
-				t.Errorf("want HTTP Content-Type %v; got %v", "application/json", got.Header.Get("Content-Type"))
+				t.Errorf("JSON.WriteJSON(): want HTTP Content-Type %v; got %v", "application/json", got.Header.Get("Content-Type"))
 			}
 
 			defer func(Body io.ReadCloser) {
@@ -266,6 +283,7 @@ func TestWriteJSON(t *testing.T) {
 					t.Fatal(err)
 				}
 			}(got.Body)
+			//defer got.Body.Close()
 
 			body, err := io.ReadAll(got.Body)
 			if err != nil {
@@ -274,7 +292,7 @@ func TestWriteJSON(t *testing.T) {
 			bytes.TrimSpace(body)
 
 			if string(body) != tt.want {
-				t.Errorf("want %q; got %q", tt.want, string(body))
+				t.Errorf("JSON.WriteJSON(): want %q; got %q", tt.want, string(body))
 			}
 		})
 	}

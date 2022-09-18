@@ -3,15 +3,19 @@ package json
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/choonsiong/golib/logger"
 	"io"
 	"net/http"
 )
 
 type JSON struct {
-	MaxBytes           int
 	AllowUnknownFields bool
+	MaxBytes           int
+	Logger             logger.Logger
 }
 
+// ReadJSON tries to read the body of a request and coverts from json into
+// a go data variable.
 func (j *JSON) ReadJSON(w http.ResponseWriter, r *http.Request, data any) error {
 	maxBytes := 1024 * 1024 // 1MB
 
@@ -26,6 +30,11 @@ func (j *JSON) ReadJSON(w http.ResponseWriter, r *http.Request, data any) error 
 	if !j.AllowUnknownFields {
 		d.DisallowUnknownFields()
 	}
+
+	j.Logger.PrintDebug("ReadJSON()", map[string]string{
+		"AllowUnknownFields": fmt.Sprintf("%v", j.AllowUnknownFields),
+		"MaxBytes":           fmt.Sprintf("%v", maxBytes),
+	})
 
 	err := d.Decode(data)
 	if err != nil {
@@ -60,6 +69,10 @@ func (j *JSON) ReadJSON(w http.ResponseWriter, r *http.Request, data any) error 
 	//	}
 	//}
 
+	j.Logger.PrintDebug("ReadJSON()", map[string]string{
+		"Data": fmt.Sprintf("%v", data),
+	})
+
 	err = d.Decode(&struct{}{})
 	if err != io.EOF {
 		return fmt.Errorf("ReadJSON(): %w: %v", ErrMultipleJSONValue, err)
@@ -68,7 +81,9 @@ func (j *JSON) ReadJSON(w http.ResponseWriter, r *http.Request, data any) error 
 	return nil
 }
 
-func WriteJSON(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
+// WriteJSON takes a response status code and arbitrary data and writes json
+// to the client.
+func (j *JSON) WriteJSON(w http.ResponseWriter, status int, data any, headers ...http.Header) error {
 	out, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
