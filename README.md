@@ -5,11 +5,7 @@
 [![Go report card](https://goreportcard.com/badge/github.com/choonsiong/golib/v2)](https://goreportcard.com/report/github.com/choonsiong/golib/v2)
 [![Coverage Status](https://coveralls.io/repos/github/choonsiong/golib/badge.svg?branch=main)](https://coveralls.io/github/choonsiong/golib?branch=main)
 
-> **Note** 
-> 
-> A personal go library, use at your own risk.
-
-
+This is a personal go library, **use at your own risk**.
 
 ## Installation
 
