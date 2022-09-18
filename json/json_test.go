@@ -17,76 +17,142 @@ type Person struct {
 	Email string `json:"email"`
 }
 
-func TestReadJSON(t *testing.T) {
+func TestJSON_ReadJSON(t *testing.T) {
+	j := &JSON{}
+
 	tests := []struct {
-		name    string
-		body    io.Reader
-		want    *Person
-		wantErr error
+		name               string
+		body               string
+		maxBytes           int
+		allowUnknownFields bool
+		want               *Person
+		wantErr            error
 	}{
 		{
 			name:    "valid json body",
-			body:    strings.NewReader(`{"name": "foobar","age": 42,"email":"foobar@example.com"}`),
+			body:    `{"name": "foobar","age": 42,"email":"foobar@example.com"}`,
 			want:    &Person{"foobar", 42, "foobar@example.com"},
 			wantErr: nil,
 		},
 		{
 			name:    "valid json body with extra field",
-			body:    strings.NewReader(`{"name": "foobar","age": 42,"email":"foobar@example.com","mobile":"1234567"}`),
+			body:    `{"name": "foobar","age": 42,"email":"foobar@example.com","mobile":"1234567"}`,
 			want:    &Person{"foobar", 42, "foobar@example.com"},
 			wantErr: nil,
 		},
 		{
+			name:    "badly formatted json",
+			body:    `{"name":}`,
+			want:    new(Person),
+			wantErr: nil,
+		},
+		{
 			name:    "multiple json body",
-			body:    strings.NewReader(`{"name": "foobar","age": 42,"email":"foobar@example.com"}{"name": "alice","age": 28,"email":"alice@example.com"}`),
+			body:    `{"name": "foobar","age": 42,"email":"foobar@example.com"}{"name": "alice","age": 28,"email":"alice@example.com"}`,
 			want:    &Person{"foobar", 42, "foobar@example.com"},
 			wantErr: ErrMultipleJSONValue,
 		},
+		{
+			name:     "maximum bytes",
+			body:     `{"name": "foobar","age": 42,"email":"foobar@example.com"}`,
+			maxBytes: 1,
+			want:     new(Person),
+			wantErr:  ErrDecodeJSON,
+		},
+		{
+			name:               "disallow unknown fields",
+			body:               `{"name": "foobar","age": 42,"email":"foobar@example.com","unknown":"unknown"}`,
+			want:               &Person{"foobar", 42, "foobar@example.com"},
+			allowUnknownFields: false,
+			wantErr:            ErrDecodeJSON,
+		},
+		{
+			name:               "allow unknown fields",
+			body:               `{"name": "foobar","age": 42,"email":"foobar@example.com","unknown":"unknown"}`,
+			want:               &Person{"foobar", 42, "foobar@example.com"},
+			allowUnknownFields: true,
+			wantErr:            nil,
+		},
+		{
+			name:    "empty json body",
+			body:    ``,
+			want:    new(Person),
+			wantErr: ErrDecodeJSON,
+		},
+		{
+			name:    "incorrect json field type",
+			body:    `{"name": 42}`,
+			want:    new(Person),
+			wantErr: ErrDecodeJSON,
+		},
+		{
+			name:    "syntax error in json body",
+			body:    `{"name": "bar"`,
+			want:    new(Person),
+			wantErr: ErrDecodeJSON,
+		},
+		{
+			name:    "missing field name in json body",
+			body:    `{name: "fobar"}`,
+			want:    new(Person),
+			wantErr: ErrDecodeJSON,
+		},
+		{
+			name:    "not json",
+			body:    `hello world`,
+			want:    new(Person),
+			wantErr: ErrDecodeJSON,
+		},
 	}
-
-	p := new(Person)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
+			p := new(Person)
 
-			r, err := http.NewRequest(http.MethodGet, "/", tt.body)
+			r, err := http.NewRequest(http.MethodGet, "/", strings.NewReader(tt.body))
 			r.Header.Set("Content-Type", "application/json")
 
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			err = ReadJSON(w, r, p)
+			j.AllowUnknownFields = tt.allowUnknownFields
+			j.MaxBytes = tt.maxBytes
+
+			err = j.ReadJSON(w, r, p)
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %q; got nil", tt.wantErr)
+					t.Errorf("want error %v; got nil", tt.wantErr)
 				}
 				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("want error %q; got %q", tt.wantErr, err)
+					t.Errorf("want error %v; got %v", tt.wantErr, err)
 				}
 			}
 
 			if !reflect.DeepEqual(p, tt.want) {
 				t.Errorf("want %v; got %v", tt.want, p)
 			}
+
+			p = nil
 		})
 	}
 }
 
-func TestReadJSON_Decode(t *testing.T) {
+func TestJSON_ReadJSONDecode(t *testing.T) {
+	j := &JSON{}
 	w := httptest.NewRecorder()
 
 	tests := []struct {
 		name    string
-		body    io.Reader
+		body    string
 		want    *Person
 		wantErr error
 	}{
 		{
 			name:    "nil receiver",
-			body:    strings.NewReader(`{"name": "foobar","age": 42,"email":"foobar@example.com"}`),
+			body:    `{"name": "foobar","age": 42,"email":"foobar@example.com"}`,
 			want:    nil,
 			wantErr: nil,
 		},
@@ -94,21 +160,21 @@ func TestReadJSON_Decode(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r, err := http.NewRequest(http.MethodGet, "/", tt.body)
+			r, err := http.NewRequest(http.MethodGet, "/", bytes.NewReader([]byte(tt.body)))
 			r.Header.Set("Content-Type", "application/json")
 
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			err = ReadJSON(w, r, nil)
+			err = j.ReadJSON(w, r, nil)
 
 			if tt.wantErr != nil {
 				if err == nil {
-					t.Errorf("want error %q; got nil", tt.wantErr)
+					t.Errorf("want error %v; got nil", tt.wantErr)
 				}
 				if !errors.Is(err, tt.wantErr) {
-					t.Errorf("want error %q; got %q", tt.wantErr, err)
+					t.Errorf("want error %v; got %v", tt.wantErr, err)
 				}
 			}
 		})
