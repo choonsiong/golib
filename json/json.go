@@ -14,6 +14,13 @@ type JSON struct {
 	Logger             logger.Logger
 }
 
+// JSONResponse is the type used for sending JSON.
+type JSONResponse struct {
+	Error   bool   `json:"error"`
+	Message string `json:"message"`
+	Data    any    `json:"data,omitempty"`
+}
+
 // ReadJSON tries to read the body of a request and coverts from json into
 // a go data variable.
 func (j *JSON) ReadJSON(w http.ResponseWriter, r *http.Request, data any) error {
@@ -104,4 +111,20 @@ func (j *JSON) WriteJSON(w http.ResponseWriter, status int, data any, headers ..
 	}
 
 	return nil
+}
+
+// ErrorJSON takes an error and optionally a status code, generates and
+// send a JSON error message.
+func (j *JSON) ErrorJSON(w http.ResponseWriter, err error, status ...int) error {
+	statusCode := http.StatusBadRequest
+
+	if len(status) > 0 {
+		statusCode = status[0]
+	}
+
+	var payload JSONResponse
+	payload.Error = true
+	payload.Message = err.Error()
+
+	return j.WriteJSON(w, statusCode, payload)
 }

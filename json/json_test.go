@@ -2,6 +2,7 @@ package json
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"github.com/choonsiong/golib/logger"
 	"github.com/choonsiong/golib/logger/commonlog"
@@ -295,5 +296,38 @@ func TestJSON_WriteJSON(t *testing.T) {
 				t.Errorf("JSON.WriteJSON(): want %q; got %q", tt.want, string(body))
 			}
 		})
+	}
+}
+
+func TestJSON_ErrorJSON(t *testing.T) {
+	j := &JSON{}
+	j.Logger = commonlog.New(os.Stdout, logger.LevelError)
+
+	resp := httptest.NewRecorder()
+
+	err := j.ErrorJSON(resp, errors.New("test error"), http.StatusTooManyRequests)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var payload JSONResponse
+
+	d := json.NewDecoder(resp.Body)
+
+	err = d.Decode(&payload)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !payload.Error {
+		t.Errorf("ErrorJSON(): want true; got %v", payload.Error)
+	}
+
+	if resp.Code != http.StatusTooManyRequests {
+		t.Errorf("ErrorJSON(): want %v; got %v", http.StatusTooManyRequests, resp.Code)
+	}
+
+	if payload.Message != "test error" {
+		t.Errorf("ErrorJSON(): want %q; got %q", "tset error", payload.Message)
 	}
 }
