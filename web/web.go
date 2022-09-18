@@ -3,7 +3,7 @@ package web
 import (
 	"errors"
 	"fmt"
-	"github.com/choonsiong/golib/stringx"
+	"github.com/choonsiong/golib/v2/stringx"
 	"io"
 	"net/http"
 	"os"

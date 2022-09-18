@@ -3,7 +3,7 @@ package commonlog
 import (
 	"bytes"
 	"errors"
-	"github.com/choonsiong/golib/logger"
+	"github.com/choonsiong/golib/v2/logger"
 	"reflect"
 	"strings"
 	"sync"

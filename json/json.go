@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/choonsiong/golib/logger"
+	"github.com/choonsiong/golib/v2/logger"
 	"io"
 	"net/http"
 )

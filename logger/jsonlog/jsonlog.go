@@ -3,7 +3,7 @@ package jsonlog
 
 import (
 	"encoding/json"
-	"github.com/choonsiong/golib/logger"
+	"github.com/choonsiong/golib/v2/logger"
 	"io"
 	"os"
 	"runtime/debug"

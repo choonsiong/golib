@@ -2,9 +2,9 @@ package sms
 
 import (
 	"errors"
-	"github.com/choonsiong/golib/logger"
-	"github.com/choonsiong/golib/logger/commonlog"
-	"github.com/choonsiong/golib/logger/jsonlog"
+	"github.com/choonsiong/golib/v2/logger"
+	"github.com/choonsiong/golib/v2/logger/commonlog"
+	"github.com/choonsiong/golib/v2/logger/jsonlog"
 	"os"
 	"reflect"
 	"testing"

@@ -2,7 +2,7 @@
 package commonlog
 
 import (
-	"github.com/choonsiong/golib/logger"
+	"github.com/choonsiong/golib/v2/logger"
 	"io"
 	"os"
 	"runtime/debug"
