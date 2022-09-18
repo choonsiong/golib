@@ -331,3 +331,39 @@ func TestJSON_ErrorJSON(t *testing.T) {
 		t.Errorf("ErrorJSON(): want %q; got %q", "tset error", payload.Message)
 	}
 }
+
+// To simulate a remote API
+type RoundTripFunc func(req *http.Request) *http.Response
+
+func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req), nil
+}
+
+func NewTestClient(fn RoundTripFunc) *http.Client {
+	return &http.Client{
+		Transport: fn,
+	}
+}
+
+func TestJSON_PushJSONToRemote(t *testing.T) {
+	j := &JSON{}
+	j.Logger = commonlog.New(os.Stdout, logger.LevelError)
+
+	client := NewTestClient(func(req *http.Request) *http.Response {
+		return &http.Response{
+			StatusCode: http.StatusOK,
+			Body:       io.NopCloser(bytes.NewBufferString("ok")),
+			Header:     make(http.Header),
+		}
+	})
+
+	var dummy struct {
+		Foo string `json:"foo"`
+	}
+	dummy.Foo = "Bar"
+
+	_, _, err := j.PushJSONToRemote("http://example.com/api/foo", dummy, client)
+	if err != nil {
+		t.Fatal(err)
+	}
+}

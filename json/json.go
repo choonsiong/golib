@@ -1,6 +1,7 @@
 package json
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/choonsiong/golib/logger"
@@ -127,4 +128,37 @@ func (j *JSON) ErrorJSON(w http.ResponseWriter, err error, status ...int) error 
 	payload.Message = err.Error()
 
 	return j.WriteJSON(w, statusCode, payload)
+}
+
+// PushJSONToRemote posts arbitrary data to a remote URL as JSON, and returns
+// the response, status code and error if any. The final parameter client is
+// optional. If none is specified, we use the standard http.Client.
+func (j *JSON) PushJSONToRemote(uri string, data any, client ...*http.Client) (*http.Response, int, error) {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	httpClient := &http.Client{}
+
+	if len(client) > 0 {
+		// client is a variadic variable, which means it allows us to send either 0 or more
+		// values
+		httpClient = client[0]
+	}
+
+	req, err := http.NewRequest("POST", uri, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	defer resp.Body.Close()
+
+	return resp, resp.StatusCode, nil
 }
