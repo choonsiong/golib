@@ -1,6 +1,6 @@
 # golib
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/kkdai/youtube/master/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/choonsiong/golib/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/choonsiong/golib/v2?status.png)](https://pkg.go.dev/github.com/choonsiong/golib/v2?tab=doc)
 [![Go report card](https://goreportcard.com/badge/github.com/choonsiong/golib/v2)](https://goreportcard.com/report/github.com/choonsiong/golib/v2)
 [![Coverage Status](https://coveralls.io/repos/github/choonsiong/golib/badge.svg?branch=main)](https://coveralls.io/github/choonsiong/golib?branch=main)
