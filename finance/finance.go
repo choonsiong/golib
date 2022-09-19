@@ -1,3 +1,4 @@
+// Package finance provides helpers to work with financial needs.
 package finance
 
 // SimpleInterest calculates the amount of interest earned over a

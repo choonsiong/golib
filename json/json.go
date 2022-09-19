@@ -1,3 +1,4 @@
+// Package json provides helpers to work with JSON.
 package json
 
 import (

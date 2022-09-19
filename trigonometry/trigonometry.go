@@ -1,3 +1,4 @@
+// Package trigonometry provides helpers to work with trigonometry.
 package trigonometry
 
 import (

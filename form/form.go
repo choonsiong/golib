@@ -1,3 +1,4 @@
+// Package form provides helpers to work with form validation.
 package form
 
 import (
