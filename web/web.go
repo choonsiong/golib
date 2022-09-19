@@ -1,3 +1,4 @@
+// Package web provides helpers to work with website.
 package web
 
 import (

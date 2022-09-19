@@ -1,3 +1,4 @@
+// Package statistics provides helper to work with statistics.
 package statistics
 
 // Average returns the mean of numbers.
