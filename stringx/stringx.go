@@ -157,26 +157,31 @@ func CamelCaseToUnderscore(s string) string {
 // surrounded each words removed.
 // For example: " foo     bar  alice    smith" -> "foo bar alice smith"
 func TrimExtraWhiteSpacesInOut(s string) string {
-	// Remove leading and trailing whitespaces
-	ns := strings.TrimSpace(s)
-	rs := ""
-	ws := 0
+	str := ""
+	count := 0
 	inWhitespace := false
 
-	for _, r := range ns {
-		if r == ' ' && ws == 0 {
+	for _, ch := range strings.TrimSpace(s) {
+		// If we encounter the whitespace character first time
+		if ch == ' ' && count == 0 {
+			// Set inWhitespace to true to indicate we are in the
+			// whitespace now
 			inWhitespace = true
-			ws += 1
-		} else if r == ' ' && ws > 0 {
+			count += 1
+		} else if ch == ' ' && count > 0 {
+			// We are still in the whitespace, so continue to next
+			// character
 			if inWhitespace {
 				continue
 			}
 		} else {
+			// Out of whitespace
 			inWhitespace = false
-			ws = 0
+			count = 0
 		}
-		rs += string(r)
+
+		str += string(ch)
 	}
 
-	return rs
+	return str
 }

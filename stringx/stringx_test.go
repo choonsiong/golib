@@ -261,6 +261,8 @@ func TestTrimExtraWhiteSpacesInOut(t *testing.T) {
 		{"       foo     bar    ", "       foo     bar    ", "foo bar"},
 		{"foo     bar", "foo     bar", "foo bar"},
 		{"foo     bar          alice smith ", "foo     bar          alice smith ", "foo bar alice smith"},
+		{"foobar", "foobar", "foobar"},
+		{"f o o b a r", "f o o b a r", "f o o b a r"},
 	}
 
 	for _, tt := range tests {
