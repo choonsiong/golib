@@ -152,3 +152,31 @@ func CamelCaseToUnderscore(s string) string {
 	}
 	return string(output)
 }
+
+// TrimExtraWhiteSpacesInOut returns a string with extra whitespaces
+// surrounded each words removed.
+// For example: " foo     bar  alice    smith" -> "foo bar alice smith"
+func TrimExtraWhiteSpacesInOut(s string) string {
+	// Remove leading and trailing whitespaces
+	ns := strings.TrimSpace(s)
+	rs := ""
+	ws := 0
+	inWhitespace := false
+
+	for _, r := range ns {
+		if r == ' ' && ws == 0 {
+			inWhitespace = true
+			ws += 1
+		} else if r == ' ' && ws > 0 {
+			if inWhitespace {
+				continue
+			}
+		} else {
+			inWhitespace = false
+			ws = 0
+		}
+		rs += string(r)
+	}
+
+	return rs
+}

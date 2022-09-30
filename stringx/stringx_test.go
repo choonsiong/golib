@@ -245,7 +245,30 @@ func TestCamelCaseToUnderscore(t *testing.T) {
 			got := CamelCaseToUnderscore(tt.word)
 
 			if got != tt.want {
-				t.Errorf("CamelCaseToUnderscore((%q) == %q; want %q", tt.word, got, tt.want)
+				t.Errorf("CamelCaseToUnderscore(%q) == %q; want %q", tt.word, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTrimExtraWhiteSpacesInOut(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  string
+	}{
+		{"  foo bar  ", "  foo bar  ", "foo bar"},
+		{"       foo     bar    ", "       foo     bar    ", "foo bar"},
+		{"foo     bar", "foo     bar", "foo bar"},
+		{"foo     bar          alice smith ", "foo     bar          alice smith ", "foo bar alice smith"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := TrimExtraWhiteSpacesInOut(tt.input)
+
+			if got != tt.want {
+				t.Errorf("TrimExtraWhiteSpacesInOut(%q) == %q; want %q", tt.input, got, tt.want)
 			}
 		})
 	}
