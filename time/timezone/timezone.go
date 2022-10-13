@@ -558,11 +558,21 @@ func DescriptiveName(tz string) string {
 		return ""
 	}
 
-	if _, ok := timezones[tz]; !ok {
+	if !HasTimezone(tz) {
 		return ""
 	}
 
 	v := timezones[tz]
 
 	return v
+}
+
+// HasTimezone returns true if tz in timezones.
+// Note: timezones might be a complete list of all available timezones.
+func HasTimezone(tz string) bool {
+	if _, ok := timezones[tz]; !ok {
+		return false
+	}
+
+	return true
 }
