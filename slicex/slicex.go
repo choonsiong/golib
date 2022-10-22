@@ -4,6 +4,12 @@ import (
 	"reflect"
 )
 
+// Compare returns true if both slices have identical elements,
+// else returns false.
+func Compare[T any](s1 []T, s2 []T) bool {
+	return reflect.DeepEqual(s1, s2)
+}
+
 // Contains returns true if element e is found in slice s else returns false.
 // The type T can be either int, string or bool only.
 func Contains[T any](e T, s []T) bool {

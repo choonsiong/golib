@@ -2,6 +2,54 @@ package slicex
 
 import "testing"
 
+func TestCompare_int(t *testing.T) {
+
+	tests := []struct {
+		name string
+		s1   []int
+		s2   []int
+		want bool
+	}{
+		{"empty slice", []int{}, []int{}, true},
+		{"valid slice", []int{1, 2, 3}, []int{1, 2, 3}, true},
+		{"invalid slice", []int{1, 2}, []int{1, 2, 3}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Compare(tt.s1, tt.s2)
+
+			if got != tt.want {
+				t.Errorf("Compare(%v, %v) == %v; want %v", tt.s1, tt.s2, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCompare_string(t *testing.T) {
+
+	tests := []struct {
+		name string
+		s1   []string
+		s2   []string
+		want bool
+	}{
+		{"empty slice", []string{}, []string{}, true},
+		{"valid slice", []string{"a", "b", "c"}, []string{"a", "b", "c"}, true},
+		{"invalid slice", []string{"a", "b"}, []string{"a", "b", "c"}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Compare(tt.s1, tt.s2)
+
+			if got != tt.want {
+				t.Errorf("Compare(%v, %v) == %v; want %v", tt.s1, tt.s2, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestContains_bool(t *testing.T) {
 
 	tests := []struct {
