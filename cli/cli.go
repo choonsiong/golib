@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 )
@@ -45,4 +46,13 @@ func GetFloat() (float64, error) {
 	}
 
 	return number, nil
+}
+
+// ProgName returns the program name from the command-line arguments.
+func ProgName(args []string) string {
+	if len(args) == 0 {
+		return ""
+	}
+
+	return path.Base(args[0])
 }

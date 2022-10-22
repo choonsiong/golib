@@ -86,3 +86,24 @@ func TestGetFloat(t *testing.T) {
 		})
 	}
 }
+
+func TestProgName(t *testing.T) {
+	tests := []struct {
+		name  string
+		input []string
+		want  string
+	}{
+		{"/x/y/foo", []string{"/x/y/foo"}, "foo"},
+		{"foo", []string{"foo"}, "foo"},
+		{"", []string{}, ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ProgName(tt.input)
+			if got != tt.want {
+				t.Errorf("ProgName(%s) == %s; want %s", tt.input, got, tt.want)
+			}
+		})
+	}
+}
