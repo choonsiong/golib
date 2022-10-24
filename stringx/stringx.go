@@ -12,32 +12,43 @@ import (
 )
 
 // CapitalizeEachWord returns string s with each word capitalized.
+// This function works on ASCII letters only.
 func CapitalizeEachWord(s string) string {
+	// Below line has same effect, but it also handles those words
+	// start with a non-ASCII letter, e.g. \hello -> \Hello which
+	// might not what we want.
+	//return strings.TrimSpace(strings.Title(s))
+
 	if s == "" {
 		return ""
 	}
 
+	// Handle multi-bytes characters
 	if len([]byte(s)) != len([]rune(s)) {
 		return s
 	}
 
-	ss := strings.Split(strings.ToLower(s), " ")
-	var result string
+	words := strings.Split(strings.ToLower(s), " ")
 
-	for _, ch := range ss {
-		bs := []byte(ch)
+	// Using strings.Builder is more efficient than concatenating
+	// regular string values.
+	var result strings.Builder
 
-		// Ignore all non-English characters
+	for _, word := range words {
+		bs := []byte(word)
+
+		// ASCII letters only
 		if bs[0] < 97 || bs[0] > 122 {
 			return s
 		}
 
 		bs[0] -= 32
-		result += string(bs)
-		result += " "
+
+		result.Write(bs)
+		result.WriteRune(' ')
 	}
 
-	return strings.TrimSpace(result)
+	return strings.TrimSpace(result.String())
 }
 
 // RandomPassword returns a random password for the given length.
@@ -51,10 +62,11 @@ const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 // randomStringSource as the source for the string.
 func RandomString(length int) (string, error) {
 	if length < 0 {
-		return "", fmt.Errorf("%w: %v", ErrInvalidInput, length)
+		return "", fmt.Errorf("%w: %v", ErrInvalidLength, length)
 	}
 
 	s, r := make([]rune, length), []rune(randomStringSource)
+
 	for i := range s {
 		p, err := rand.Prime(rand.Reader, len(r))
 		if err != nil {
@@ -75,7 +87,7 @@ func RandomStringIgnoreError(length int) string {
 }
 
 // Slugify returns a string with all non-english letters and non-digits with
-// '-', for example, 'hello world' -> 'hello-world'.
+// '-'. For example, 'hello world' -> 'hello-world'.
 func Slugify(s string) (string, error) {
 	if s == "" {
 		return "", ErrEmptyString
@@ -93,19 +105,19 @@ func Slugify(s string) (string, error) {
 	return slug, nil
 }
 
-// UnderscoreToUpperCamelCase returns underscore string s in language t
-// in upper camel case.
+// UnderscoreToUpperCamelCase returns the underscore string s in language t
+// in all upper camel case.
 // For example: foo_bar -> FooBar
 func UnderscoreToUpperCamelCase(s string, t language.Tag) string {
-	s = strings.Replace(s, "_", " ", -1)
+	r := strings.ReplaceAll(s, "_", " ")
 
 	titleCase := cases.Title(t)
-	s = titleCase.String(s)
+	r = titleCase.String(r)
 
-	return strings.Replace(s, " ", "", -1)
+	return strings.ReplaceAll(r, " ", "")
 }
 
-// UnderscoreToLowerCamelCase returns underscore string s in language t
+// UnderscoreToLowerCamelCase returns the underscore string s in language t
 // in lower camel case.
 // For example: foo_bar -> fooBar
 func UnderscoreToLowerCamelCase(s string, t language.Tag) string {
@@ -119,6 +131,7 @@ func CamelCaseToUnderscore(s string) string {
 	if strings.Contains(s, "_") || strings.Contains(s, " ") {
 		return s
 	}
+
 	if len(s) > 1 {
 		var idx, count int
 		for i, r := range s {
@@ -128,9 +141,10 @@ func CamelCaseToUnderscore(s string) string {
 					idx = i
 					continue
 				} else {
+					// If idx + 1 is equal to i, means the previous index
+					// and the current index are both uppercase letters,
+					// e.g. FOobar, f00bar
 					if idx+1 == i {
-						// Two consecutive uppercase letter found,
-						// i.e. FOobar, fOObar
 						return s
 					} else {
 						idx = i
@@ -139,49 +153,56 @@ func CamelCaseToUnderscore(s string) string {
 			}
 		}
 	}
-	var output []rune
+
+	var builder strings.Builder
+
 	for i, r := range s {
 		if i == 0 {
-			output = append(output, unicode.ToLower(r))
+			builder.WriteRune(unicode.ToLower(r))
 			continue
 		}
+
 		if unicode.IsUpper(r) {
-			output = append(output, '_')
+			builder.WriteRune('_')
 		}
-		output = append(output, unicode.ToLower(r))
+
+		builder.WriteRune(unicode.ToLower(r))
 	}
-	return string(output)
+
+	return builder.String()
 }
 
 // TrimExtraWhiteSpacesInOut returns a string with extra whitespaces
 // surrounded each words removed.
 // For example: " foo     bar  alice    smith" -> "foo bar alice smith"
 func TrimExtraWhiteSpacesInOut(s string) string {
-	str := ""
-	count := 0
-	inWhitespace := false
+	return strings.Join(strings.Fields(s), " ")
 
-	for _, ch := range strings.TrimSpace(s) {
-		// If we encounter the whitespace character first time
-		if ch == ' ' && count == 0 {
-			// Set inWhitespace to true to indicate we are in the
-			// whitespace now
-			inWhitespace = true
-			count += 1
-		} else if ch == ' ' && count > 0 {
-			// We are still in the whitespace, so continue to next
-			// character
-			if inWhitespace {
-				continue
-			}
-		} else {
-			// Out of whitespace
-			inWhitespace = false
-			count = 0
-		}
-
-		str += string(ch)
-	}
-
-	return str
+	//str := ""
+	//count := 0
+	//inWhitespace := false
+	//
+	//for _, ch := range strings.TrimSpace(s) {
+	//	// If we encounter the whitespace character first time
+	//	if ch == ' ' && count == 0 {
+	//		// Set inWhitespace to true to indicate we are in the
+	//		// whitespace now
+	//		inWhitespace = true
+	//		count += 1
+	//	} else if ch == ' ' && count > 0 {
+	//		// We are still in the whitespace, so continue to next
+	//		// character
+	//		if inWhitespace {
+	//			continue
+	//		}
+	//	} else {
+	//		// Out of whitespace
+	//		inWhitespace = false
+	//		count = 0
+	//	}
+	//
+	//	str += string(ch)
+	//}
+	//
+	//return str
 }

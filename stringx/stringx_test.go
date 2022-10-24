@@ -43,7 +43,7 @@ func TestRandomPassword(t *testing.T) {
 		want    int
 		wantErr error
 	}{
-		{"length -1", -1, 0, ErrInvalidInput},
+		{"length -1", -1, 0, ErrInvalidLength},
 		{"length 0", 0, 0, nil},
 		{"length 10", 10, 10, nil},
 		{"length 20", 20, 20, nil},
@@ -76,7 +76,7 @@ func TestRandomString(t *testing.T) {
 		want    int
 		wantErr error
 	}{
-		{"length -1", -1, 0, ErrInvalidInput},
+		{"length -1", -1, 0, ErrInvalidLength},
 		{"length 0", 0, 0, nil},
 		{"length 10", 10, 10, nil},
 		{"length 20", 20, 20, nil},
@@ -175,6 +175,7 @@ func TestUnderscoreToUpperCamelCase(t *testing.T) {
 		{"foo__bar", "foo__bar", language.English, "FooBar"},
 		{"foo bar", "foo bar", language.English, "FooBar"},
 		{"Foo Bar", "Foo Bar", language.English, "FooBar"},
+		{" Foo Foo_Bar", " Foo Foo_Bar", language.English, "FooFooBar"},
 	}
 
 	for _, tt := range tests {
@@ -204,6 +205,7 @@ func TestUnderscoreToLowerCamelCase(t *testing.T) {
 		{"foo__bar", "foo__bar", language.English, "fooBar"},
 		{"foo bar", "foo bar", language.English, "fooBar"},
 		{"Foo Bar", "Foo Bar", language.English, "fooBar"},
+		{"Foo Foo_Bar", "Foo Foo_Bar", language.English, "fooFooBar"},
 	}
 
 	for _, tt := range tests {
