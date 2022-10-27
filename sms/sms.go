@@ -1,4 +1,4 @@
-// Package sms provides helpers to work with sms.
+// Package sms provides types and methods to work with SMS delivery.
 package sms
 
 import (
@@ -9,14 +9,14 @@ import (
 	"strings"
 )
 
-// SMS implements various information needed for the SMS type.
+// SMS contains properties required for sending SMS to an SMS gateway.
 type SMS struct {
-	Host       string   // sms server hostname or ip
-	Port       string   // sms server port number
-	Sender     string   // sms sender
-	Content    string   // sms content
-	Recipients []string // list of sms recipients
-	UseHTTPS   bool     // use https?
+	UseHTTPS   bool     // Use secure http
+	Content    string   // SMS content
+	Host       string   // SMS server hostname or ip
+	Port       string   // SMS server port number
+	Sender     string   // SMS sender
+	Recipients []string // List of sms recipients
 	Logger     logger.Logger
 }
 
