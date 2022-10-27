@@ -74,8 +74,30 @@ func TestContains_bool(t *testing.T) {
 	}
 }
 
-func TestContains_int(t *testing.T) {
+func TestContains_float(t *testing.T) {
+	tests := []struct {
+		name    string
+		element float64
+		input   []float64
+		want    bool
+	}{
+		{"empty slice", 1.0, []float64{}, false},
+		{"float64 valid", 2.0, []float64{1.0, 2.0, 3.0, 4.0}, true},
+		{"float64 invalid", 5.0, []float64{1.0, 2.0, 3.0, 4.0}, false},
+	}
 
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Contains(tt.element, tt.input)
+
+			if got != tt.want {
+				t.Errorf("Contains(%v, %v) == %v; want %v", tt.element, tt.input, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestContains_int(t *testing.T) {
 	tests := []struct {
 		name    string
 		element int

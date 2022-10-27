@@ -22,6 +22,10 @@ func Contains[T any](e T, s []T) bool {
 			if r1.Int() == r2.Int() {
 				return true
 			}
+		case "float64":
+			if r1.Float() == r2.Float() {
+				return true
+			}
 		case "string":
 			if r1.String() == r2.String() {
 				return true

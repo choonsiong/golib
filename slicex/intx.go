@@ -7,6 +7,7 @@ import (
 
 type Ints []int
 
+// String returns a nicely formatted output to use in fmt functions.
 func (ints Ints) String() string {
 	var sb strings.Builder
 
@@ -25,6 +26,7 @@ func (ints Ints) String() string {
 	return sb.String()
 }
 
+// Total returns the total value of the slice of int.
 func (ints Ints) Total() (total int) {
 	for _, i := range ints {
 		total += i
