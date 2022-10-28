@@ -2,6 +2,7 @@ package cli
 
 import (
 	"errors"
+	"github.com/choonsiong/golib/v2/slicex"
 	"log"
 	"os"
 	"strings"
@@ -79,6 +80,44 @@ func TestGetFloat(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("GetFloat() == %v; want %v", got, tt.want)
+			}
+
+			w.Close()
+			os.Stdin = origStdin
+		})
+	}
+}
+
+func TestGetStringsWithPrompt(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  []string
+	}{
+		{"valid strings", "hello world 3.141\n", []string{"hello", "world", "3.141"}},
+		{"extra strings", "hello world goodbye world\n", []string{"hello", "world", "goodbye"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r, w, err := os.Pipe()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			origStdin := os.Stdin
+			os.Stdin = r
+
+			_, err = w.Write([]byte(tt.input))
+			if err != nil {
+				w.Close()
+				os.Stdin = origStdin
+				log.Fatal(err)
+			}
+
+			got := GetStringsWithPrompt("Enter some text", 3)
+			if !slicex.Compare(got, tt.want) {
+				t.Errorf("GetStringsWithPrompt() == %v; want %v", got, tt.want)
 			}
 
 			w.Close()
