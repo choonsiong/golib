@@ -38,6 +38,11 @@ func (l *CommonLog) PrintInfo(message string, properties map[string]string) {
 	l.print(logger.LevelInfo, message, properties)
 }
 
+// PrintWarning is a helper method to write WARNING level log entries.
+func (l *CommonLog) PrintWarning(message string, properties map[string]string) {
+	l.print(logger.LevelWarning, message, properties)
+}
+
 // PrintError is a helper method to write ERROR level log entries.
 func (l *CommonLog) PrintError(err error, properties map[string]string) {
 	l.print(logger.LevelError, err.Error(), properties)

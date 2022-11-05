@@ -13,6 +13,7 @@ func TestLevel_String(t *testing.T) {
 	}{
 		{"debug", LevelDebug, "DEBUG"},
 		{"info", LevelInfo, "INFO"},
+		{"warning", LevelWarning, "WARNING"},
 		{"error", LevelError, "ERROR"},
 		{"fatal", LevelFatal, "FATAL"},
 		{"unknown", Level(42), "UNKNOWN"},
@@ -37,6 +38,7 @@ func TestLogLevel(t *testing.T) {
 	}{
 		{"debug", "debug", LevelDebug},
 		{"info", "info", LevelInfo},
+		{"warning", "warning", LevelWarning},
 		{"error", "error", LevelError},
 		{"fatal", "fatal", LevelFatal},
 		{"unknown", "unknown", LevelUnknown},

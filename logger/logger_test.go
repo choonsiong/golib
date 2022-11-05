@@ -23,6 +23,10 @@ func (j *TestJsonLog) PrintFatal(err error, properties map[string]string) {
 	}
 }
 
+func (j *TestJsonLog) PrintWarning(message string, properties map[string]string) {
+	j.print(message)
+}
+
 func (j *TestJsonLog) PrintInfo(message string, properties map[string]string) {
 	j.print(message)
 }

@@ -7,5 +7,6 @@ type Logger interface {
 	PrintError(err error, properties map[string]string)
 	PrintFatal(err error, properties map[string]string)
 	PrintInfo(message string, properties map[string]string)
+	PrintWarning(message string, properties map[string]string)
 	Write(message []byte) (n int, err error)
 }
