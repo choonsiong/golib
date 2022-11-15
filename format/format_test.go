@@ -13,6 +13,7 @@ func TestPadZeroToNineWithZero(t *testing.T) {
 		{"one", 1, "01"},
 		{"zero", 0, "00"},
 		{"negative input", -1, "01"},
+		{"ten", 10, "10"},
 		{"eleven", 11, "11"},
 		{"hundred", 100, "100"},
 	}
