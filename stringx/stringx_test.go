@@ -7,6 +7,29 @@ import (
 	"testing"
 )
 
+func TestActualLength(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  int
+	}{
+		{"empty string", "", 0},
+		{"foo bar", "foo bar", 7},
+		{"福伯", "福伯", 2},
+		{"Ah吉哥哥", "Ah吉哥哥", 5},
+		{"あいうえお", "あいうえお", 5},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ActualLength(tt.input)
+			if got != tt.want {
+				t.Errorf("ActualLength(%s) == %d; want %d", tt.input, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestCapitalizeEachWord(t *testing.T) {
 	tests := []struct {
 		name  string

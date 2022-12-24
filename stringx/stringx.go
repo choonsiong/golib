@@ -11,6 +11,12 @@ import (
 	"unicode"
 )
 
+// ActualLength returns the length of s.
+func ActualLength(s string) int {
+	runes := []rune(s)
+	return len(runes)
+}
+
 // CamelCaseToUnderscore returns camel case string s in underscore style.
 // For example: FooBar -> foo_bar
 func CamelCaseToUnderscore(s string) string {
