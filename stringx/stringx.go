@@ -1,4 +1,4 @@
-// Package stringx provides extra helpers to work with string.
+// Package stringx provides helpers to work with string.
 package stringx
 
 import (
@@ -10,6 +10,53 @@ import (
 	"strings"
 	"unicode"
 )
+
+// CamelCaseToUnderscore returns camel case string s in underscore style.
+// For example: FooBar -> foo_bar
+func CamelCaseToUnderscore(s string) string {
+	if strings.Contains(s, "_") || strings.Contains(s, " ") {
+		return s
+	}
+
+	if len(s) > 1 {
+		var idx, count int
+		for i, r := range s {
+			if unicode.IsUpper(r) {
+				count++
+				if i == 0 {
+					idx = i
+					continue
+				} else {
+					// If idx + 1 is equal to i, means the previous index
+					// and the current index are both uppercase letters,
+					// e.g. FOobar, f00bar
+					if idx+1 == i {
+						return s
+					} else {
+						idx = i
+					}
+				}
+			}
+		}
+	}
+
+	var builder strings.Builder
+
+	for i, r := range s {
+		if i == 0 {
+			builder.WriteRune(unicode.ToLower(r))
+			continue
+		}
+
+		if unicode.IsUpper(r) {
+			builder.WriteRune('_')
+		}
+
+		builder.WriteRune(unicode.ToLower(r))
+	}
+
+	return builder.String()
+}
 
 // CapitalizeEachWord returns string s with each word capitalized.
 // This function works on ASCII letters only.
@@ -105,6 +152,14 @@ func Slugify(s string) (string, error) {
 	return slug, nil
 }
 
+// UnderscoreToLowerCamelCase returns the underscore string s in language t
+// in lower camel case.
+// For example: foo_bar -> fooBar
+func UnderscoreToLowerCamelCase(s string, t language.Tag) string {
+	s = UnderscoreToUpperCamelCase(s, t)
+	return string(unicode.ToLower(rune(s[0]))) + s[1:]
+}
+
 // UnderscoreToUpperCamelCase returns the underscore string s in language t
 // in all upper camel case.
 // For example: foo_bar -> FooBar
@@ -115,61 +170,6 @@ func UnderscoreToUpperCamelCase(s string, t language.Tag) string {
 	r = titleCase.String(r)
 
 	return strings.ReplaceAll(r, " ", "")
-}
-
-// UnderscoreToLowerCamelCase returns the underscore string s in language t
-// in lower camel case.
-// For example: foo_bar -> fooBar
-func UnderscoreToLowerCamelCase(s string, t language.Tag) string {
-	s = UnderscoreToUpperCamelCase(s, t)
-	return string(unicode.ToLower(rune(s[0]))) + s[1:]
-}
-
-// CamelCaseToUnderscore returns camel case string s in underscore style.
-// For example: FooBar -> foo_bar
-func CamelCaseToUnderscore(s string) string {
-	if strings.Contains(s, "_") || strings.Contains(s, " ") {
-		return s
-	}
-
-	if len(s) > 1 {
-		var idx, count int
-		for i, r := range s {
-			if unicode.IsUpper(r) {
-				count++
-				if i == 0 {
-					idx = i
-					continue
-				} else {
-					// If idx + 1 is equal to i, means the previous index
-					// and the current index are both uppercase letters,
-					// e.g. FOobar, f00bar
-					if idx+1 == i {
-						return s
-					} else {
-						idx = i
-					}
-				}
-			}
-		}
-	}
-
-	var builder strings.Builder
-
-	for i, r := range s {
-		if i == 0 {
-			builder.WriteRune(unicode.ToLower(r))
-			continue
-		}
-
-		if unicode.IsUpper(r) {
-			builder.WriteRune('_')
-		}
-
-		builder.WriteRune(unicode.ToLower(r))
-	}
-
-	return builder.String()
 }
 
 // TrimExtraWhiteSpacesInOut returns a string with extra whitespaces
