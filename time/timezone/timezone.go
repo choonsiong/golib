@@ -1,7 +1,7 @@
 // Package timezone provides helpers to work with timezone.
 package timezone
 
-var timezones = map[string]string{
+var Timezones = map[string]string{
 	"Australia/ACT":                    "ACT",
 	"Africa/Abidjan":                   "Abidjan",
 	"Africa/Accra":                     "Accra",
@@ -562,7 +562,7 @@ func DescriptiveName(tz string) string {
 		return ""
 	}
 
-	v := timezones[tz]
+	v := Timezones[tz]
 
 	return v
 }
@@ -570,7 +570,7 @@ func DescriptiveName(tz string) string {
 // HasTimezone returns true if tz in timezones.
 // Note: timezones might be a complete list of all available timezones.
 func HasTimezone(tz string) bool {
-	if _, ok := timezones[tz]; !ok {
+	if _, ok := Timezones[tz]; !ok {
 		return false
 	}
 
