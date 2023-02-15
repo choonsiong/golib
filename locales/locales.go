@@ -1,4 +1,7 @@
 // Package locales provides helpers to work with locales.
+// Locale = language code + country code
+// Language code (2 letter code): https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+// Country code (2 letter code): https://en.wikipedia.org/wiki/ISO_3166-2
 package locales
 
 import (
