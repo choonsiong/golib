@@ -10,16 +10,17 @@ import (
 )
 
 type SSL struct {
-	CertName     string
-	CertPath     string
-	KeyName      string
-	KeyPath      string
-	Country      string
-	State        string
-	Location     string
-	Organization string
-	CommonName   string
-	Days         string
+	CertName         string
+	CertPath         string
+	KeyName          string
+	KeyPath          string
+	Country          string
+	State            string
+	Location         string
+	Organization     string
+	OrganizationUnit string
+	CommonName       string
+	Days             string
 }
 
 // Generate generates the SSL/TLS certificate and private key.
@@ -48,7 +49,7 @@ func (s *SSL) Generate() error {
 
 	certPath := s.CertPath + "/" + s.CertName
 	keyPath := s.KeyPath + "/" + s.KeyName
-	subject := "/C=" + s.Country + "/ST=" + s.State + "/L=" + s.Location + "/O=" + s.Organization + "/CN=" + s.CommonName
+	subject := "/C=" + s.Country + "/ST=" + s.State + "/L=" + s.Location + "/O=" + s.Organization + "/OU=" + s.OrganizationUnit + "/CN=" + s.CommonName
 
 	cmd := exec.Command("openssl", "genrsa", "-out", keyPath, "2048")
 	cmd.Stdout = &stdout

@@ -7,16 +7,17 @@ import (
 
 func TestSSL_Generate(t *testing.T) {
 	ssl := SSL{
-		CertPath:     "/tmp/ssl",
-		KeyPath:      "/tmp/ssl",
-		CertName:     "cert.pem",
-		KeyName:      "key.pem",
-		Country:      "MY",
-		State:        "Kuala Lumpur",
-		Location:     "Kuala Lumpur",
-		Organization: "Foo Bar",
-		CommonName:   "com.example",
-		Days:         "30",
+		CertPath:         "/tmp/ssl",
+		KeyPath:          "/tmp/ssl",
+		CertName:         "cert.pem",
+		KeyName:          "key.pem",
+		Country:          "MY",
+		State:            "Kuala Lumpur",
+		Location:         "Kuala Lumpur",
+		Organization:     "Foo Bar",
+		OrganizationUnit: "Admin",
+		CommonName:       "com.example",
+		Days:             "30",
 	}
 
 	err := ssl.Generate()
