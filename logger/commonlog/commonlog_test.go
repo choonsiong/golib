@@ -72,6 +72,21 @@ func TestCommonLog_PrintFatal(t *testing.T) {
 	t.Skip("not implement")
 }
 
+func TestCommonLog_PrintWarning(t *testing.T) {
+	buffer := new(bytes.Buffer)
+	l := New(buffer, logger.LevelWarning)
+
+	l.PrintWarning("test warning", map[string]string{"key": "value"})
+
+	now := time.Now().UTC().Format(time.RFC3339)
+	want := now + ` WARNING test warning` + "\n\t" + `key: value` + "\n"
+	got := buffer.String()
+
+	if strings.Compare(got, want) != 0 {
+		t.Errorf("CommonLog.PrintWarning() == %q; want %q", got, want)
+	}
+}
+
 func TestCommonLog_Write(t *testing.T) {
 	buffer := new(bytes.Buffer)
 	l := New(buffer, logger.LevelError)

@@ -2,6 +2,7 @@ package colorlog
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/choonsiong/golib/v2/logger"
 	"reflect"
@@ -16,7 +17,7 @@ func TestNew(t *testing.T) {
 	want := &ColorLog{nil, logger.LevelDebug, sync.Mutex{}}
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("CommonLog.New() == %v; want %v", got, want)
+		t.Errorf("ColorLog.New() == %v; want %v", got, want)
 	}
 }
 
@@ -34,5 +35,96 @@ func TestColorLog_PrintDebug(t *testing.T) {
 
 	if strings.Compare(got, want) != 0 {
 		t.Errorf("ColorLog.PrintDebug() == %q; want %q", got, want)
+	}
+}
+
+func TestColorLog_PrintInfo(t *testing.T) {
+	buffer := new(bytes.Buffer)
+	l := New(buffer, logger.LevelInfo)
+
+	l.PrintInfo("test info", map[string]string{"key": "value"})
+
+	now := time.Now().UTC().Format(time.RFC3339)
+	want := now + ` INFO test info` + "\n\t" + `key: value` + "\n"
+	got := buffer.String()
+
+	if strings.Compare(got, want) != 0 {
+		t.Errorf("ColorLog.PrintInfo() == %q; want %q", got, want)
+	}
+}
+
+func TestColorLog_PrintError(t *testing.T) {
+	buffer := new(bytes.Buffer)
+	l := New(buffer, logger.LevelError)
+
+	l.PrintError(errors.New("test error"), nil)
+
+	got := buffer.String()
+	want := `test error`
+
+	if !strings.Contains(got, want) {
+		t.Errorf("ColorLog.PrintError() == %q; want %q", got, want)
+	}
+
+	want = `ERROR`
+	if !strings.Contains(got, want) {
+		t.Errorf("ColorLog.PrintError() == %q; want %q", got, want)
+	}
+}
+
+func TestColorLog_PrintFatal(t *testing.T) {
+	t.Skip("not implement")
+}
+
+func TestColorLog_PrintWarning(t *testing.T) {
+	buffer := new(bytes.Buffer)
+	l := New(buffer, logger.LevelWarning)
+
+	l.PrintWarning("test warning", map[string]string{"key": "value"})
+
+	now := time.Now().UTC().Format(time.RFC3339)
+	want := now + ` WARNING test warning` + "\n\t" + `key: value` + "\n"
+	got := buffer.String()
+
+	if strings.Compare(got, want) != 0 {
+		t.Errorf("ColorLog.PrintWarning() == %q; want %q", got, want)
+	}
+}
+
+func TestColorLog_Write(t *testing.T) {
+	buffer := new(bytes.Buffer)
+	l := New(buffer, logger.LevelError)
+
+	_, err := l.Write([]byte("test write"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	got := buffer.String()
+	want := `test write`
+
+	if !strings.Contains(got, want) {
+		t.Errorf("ColorLog.Write() == %q;  want %q", got, want)
+	}
+
+	want = `ERROR`
+	if !strings.Contains(got, want) {
+		t.Errorf("ColorLog.Write() == %q;  want %q", got, want)
+	}
+}
+
+func TestColorLog_print(t *testing.T) {
+	buffer := new(bytes.Buffer)
+	l := New(buffer, logger.LevelDebug)
+	l.minLevel = 1
+	want := 0
+
+	got, err := l.print(-1, "", nil)
+	if err != nil {
+		t.Errorf("ColorLog.print() == %v; want nil", err)
+	}
+
+	if got != want {
+		t.Errorf("ColorLog.print(%v, %v, %v) == %d; want %d", -1, "", "", got, want)
 	}
 }
