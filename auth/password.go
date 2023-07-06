@@ -1,4 +1,5 @@
-// Package auth provides helpers to work with user authentication.
+// Package auth provides types and functions for working with
+// password verification.
 package auth
 
 import "unicode"
@@ -12,7 +13,7 @@ type Password struct {
 }
 
 // CheckPassword returns true if pw satisfied the password requirements defined
-// in the Auth struct else returns false.
+// in the Password struct else returns false.
 func (p *Password) CheckPassword(pw string) bool {
 	runes := []rune(pw)
 	if len(runes) < p.MinPasswordLength {
