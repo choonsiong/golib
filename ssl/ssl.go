@@ -69,13 +69,15 @@ func (s *SSL) Generate() error {
 		return err
 	}
 
-	// Make sure the cert and key files has correct permission
-	err = os.Chmod(certPath, 0600)
+	// Make sure the cert and key files have correct permissions.
+	// The certificate is world-readable (0644); the private key is
+	// owner-only (0600) to prevent unauthorised access.
+	err = os.Chmod(certPath, 0644)
 	if err != nil {
 		return err
 	}
 
-	err = os.Chmod(keyPath, 0644)
+	err = os.Chmod(keyPath, 0600)
 	if err != nil {
 		return err
 	}

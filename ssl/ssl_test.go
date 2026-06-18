@@ -29,15 +29,15 @@ func TestSSL_Generate(t *testing.T) {
 	if err != nil {
 		t.Errorf("SSL.Generate(): file %s not found", "/tmp/ssl/cert.pem")
 	}
-	if fileInfo.Mode().String() != "-rw-------" {
-		t.Errorf("SSL.Generate(): want %s; got %s", "-rw-------", fileInfo.Mode().String())
+	if fileInfo.Mode().String() != "-rw-r--r--" {
+		t.Errorf("SSL.Generate(): want %s; got %s", "-rw-r--r--", fileInfo.Mode().String())
 	}
 
 	fileInfo, err = os.Stat("/tmp/ssl/key.pem")
 	if err != nil {
 		t.Errorf("SSL.Generate(): file %s not found", "/tmp/ssl/key.pem")
 	}
-	if fileInfo.Mode().String() != "-rw-r--r--" {
-		t.Errorf("SSL.Generate(): want %s; got %s", "-rw-r--r--", fileInfo.Mode().String())
+	if fileInfo.Mode().String() != "-rw-------" {
+		t.Errorf("SSL.Generate(): want %s; got %s", "-rw-------", fileInfo.Mode().String())
 	}
 }

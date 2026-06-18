@@ -60,6 +60,7 @@ func (s *SMS) SendNewSMS() {
 				"message": message,
 				"err":     err.Error(),
 			})
+			continue
 		}
 
 		resp, err := httpClient.Do(req)
@@ -68,6 +69,7 @@ func (s *SMS) SendNewSMS() {
 				"message": message,
 				"err":     err.Error(),
 			})
+			continue
 		}
 
 		if strings.ToLower(resp.Status) != "200 ok" {
