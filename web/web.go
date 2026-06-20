@@ -86,23 +86,24 @@ func UploadFiles(r *http.Request, uploadDir string, rename ...bool) ([]*Uploaded
 				if renameFile {
 					uploadedFile.NewFileName = fmt.Sprintf("%s%s", stringx.RandomStringIgnoreError(25), filepath.Ext(fh.Filename))
 				} else {
-					uploadedFile.NewFileName = fh.Filename
+					// Use filepath.Base to strip any directory components from the
+					// original filename and prevent path traversal attacks.
+					uploadedFile.NewFileName = filepath.Base(fh.Filename)
 				}
 
 				uploadedFile.OriginalFileName = fh.Filename
 
-				var outputFile *os.File
+				outputFile, err := os.Create(filepath.Join(uploadDir, uploadedFile.NewFileName))
+				if err != nil {
+					return nil, err
+				}
 				defer outputFile.Close()
 
-				if outputFile, err = os.Create(filepath.Join(uploadDir, uploadedFile.NewFileName)); err != nil {
+				fileSize, err := io.Copy(outputFile, f)
+				if err != nil {
 					return nil, err
-				} else {
-					fileSize, err := io.Copy(outputFile, f)
-					if err != nil {
-						return nil, err
-					}
-					uploadedFile.FileSize = fileSize
 				}
+				uploadedFile.FileSize = fileSize
 
 				uploadedFiles = append(uploadedFiles, &uploadedFile)
 				return uploadedFiles, nil
